@@ -1,0 +1,370 @@
+/* Global Styles */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f8f9fa;
+    line-height: 1.6;
+}
+
+/* Custom Card Styling */
+.card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+}
+
+/* Form Styling */
+.form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Experience Item Styling */
+.experience-item {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6 !important;
+    position: relative;
+}
+
+.experience-item:hover {
+    background-color: #e9ecef;
+}
+
+/* CV Preview Styles */
+.cv-preview {
+    background: white;
+    min-height: 800px;
+    padding: 40px;
+    margin: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* CV Header */
+.cv-header {
+    text-align: center;
+    border-bottom: 3px solid #0d6efd;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.cv-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+}
+
+.cv-title {
+    font-size: 1.2rem;
+    color: #6c757d;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
+.cv-contact {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.cv-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cv-contact-item i {
+    color: #0d6efd;
+    width: 16px;
+}
+
+/* CV Content Layout */
+.cv-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.cv-left-column,
+.cv-right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* CV Sections */
+.cv-section {
+    margin-bottom: 20px;
+}
+
+.cv-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0d6efd;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.cv-section-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Summary Section */
+.cv-summary {
+    text-align: justify;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+/* Experience Items */
+.cv-experience-item {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cv-experience-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.cv-experience-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.cv-experience-position {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.cv-experience-company {
+    color: #0d6efd;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.cv-experience-dates {
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.cv-experience-description {
+    color: #495057;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Education Section */
+.cv-education {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.cv-education-left {
+    flex: 1;
+}
+
+.cv-education-degree {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.cv-education-field {
+    color: #0d6efd;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.cv-education-school {
+    color: #495057;
+    font-size: 0.9rem;
+    margin-top: 2px;
+}
+
+.cv-education-year {
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Skills Section */
+.cv-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cv-skill-tag {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+}
+
+/* Placeholder text styling */
+.cv-placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .cv-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .cv-contact {
+        gap: 15px;
+        font-size: 0.85rem;
+    }
+    
+    .cv-name {
+        font-size: 2rem;
+    }
+    
+    .cv-preview {
+        padding: 25px;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cv-preview {
+        padding: 20px;
+        margin: 5px;
+    }
+    
+    .cv-name {
+        font-size: 1.8rem;
+    }
+    
+    .cv-contact {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .cv-experience-header {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .cv-education {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .cv-preview {
+        box-shadow: none;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    .card, .card-header, .card-body {
+        box-shadow: none;
+        border: none;
+    }
+}
+
+/* Button Styling */
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #198754, #20c997);
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.btn-outline-primary {
+    border: 2px solid #0d6efd;
+    color: #0d6efd;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: #0d6efd;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Animation for smooth updates */
+.cv-preview * {
+    transition: all 0.3s ease;
+}
+
+/* Custom scrollbar for form */
+.card-body {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.card-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
