@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV and Cover Letter AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CV and Cover Letter AI Generator</h1>
+            <p>Generate personalized content for your professional documents using AI</p>
+        </header>
+
+        <main>
+            <div class="content-type-selector">
+                <label for="content-type">Content Type:</label>
+                <select id="content-type">
+                    <option value="cv">CV/Resume Content</option>
+                    <option value="cover_letter">Cover Letter</option>
+                    <option value="general">General Professional Content</option>
+                </select>
+            </div>
+
+            <div class="input-section">
+                <label for="prompt">Describe what you need:</label>
+                <textarea id="prompt" placeholder="Example: 'Create a professional summary for a software engineer with 5 years of experience in Python and web development'"></textarea>
+                <button id="generate-btn" onclick="generateContent()">Generate Content</button>
+            </div>
+
+            <div class="loading" id="loading" style="display: none;">
+                <p>Generating content...</p>
+            </div>
+
+            <div class="output-section" id="output-section" style="display: none;">
+                <h3>Generated Content:</h3>
+                <div id="output" class="output-content"></div>
+                <div class="output-actions">
+                    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+                    <button onclick="clearOutput()">Clear</button>
+                </div>
+            </div>
+
+            <div class="error-section" id="error-section" style="display: none;">
+                <h3>Error:</h3>
+                <div id="error-content" class="error-content"></div>
+                <button onclick="clearError()">Clear</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by OpenAI GPT-3.5</p>
+            <div class="health-status">
+                <span id="health-status">Checking API status...</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
