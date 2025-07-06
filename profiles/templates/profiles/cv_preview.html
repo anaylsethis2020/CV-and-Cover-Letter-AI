@@ -1,0 +1,176 @@
+{% extends 'profiles/base.html' %}
+
+{% block title %}CV Preview - CV and Cover Letter AI{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-eye me-2"></i>CV Preview</h2>
+            <div>
+                <a href="{% url 'profile' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
+                <button class="btn btn-success" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i>Print CV
+                </button>
+            </div>
+        </div>
+
+        <div class="cv-preview">
+            <!-- Header Section -->
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold text-primary">{{ profile.first_name }} {{ profile.last_name }}</h1>
+                <div class="text-muted">
+                    {% if profile.email %}
+                        <i class="fas fa-envelope me-2"></i>{{ profile.email }}
+                    {% endif %}
+                    {% if profile.phone %}
+                        <span class="mx-2">|</span>
+                        <i class="fas fa-phone me-2"></i>{{ profile.phone }}
+                    {% endif %}
+                </div>
+                {% if profile.address %}
+                    <div class="text-muted mt-2">
+                        <i class="fas fa-map-marker-alt me-2"></i>{{ profile.address|linebreaks }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Professional Summary -->
+            {% if profile.summary %}
+            <div class="cv-section">
+                <h4><i class="fas fa-user me-2"></i>Professional Summary</h4>
+                <p>{{ profile.summary|linebreaks }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Work Experience -->
+            {% if work_experiences %}
+            <div class="cv-section">
+                <h4><i class="fas fa-briefcase me-2"></i>Work Experience</h4>
+                {% for experience in work_experiences %}
+                <div class="experience-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1 fw-bold">{{ experience.position }}</h5>
+                            <h6 class="text-primary mb-2">{{ experience.company }}</h6>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">
+                                {{ experience.start_date|date:"M Y" }} - 
+                                {% if experience.is_current %}
+                                    <span class="badge bg-success">Present</span>
+                                {% else %}
+                                    {{ experience.end_date|date:"M Y" }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    <p class="mb-3">{{ experience.description|linebreaks }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Education -->
+            {% if educations %}
+            <div class="cv-section">
+                <h4><i class="fas fa-graduation-cap me-2"></i>Education</h4>
+                {% for education in educations %}
+                <div class="education-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1 fw-bold">{{ education.degree }}</h5>
+                            {% if education.field_of_study %}
+                                <h6 class="text-muted mb-1">{{ education.field_of_study }}</h6>
+                            {% endif %}
+                            <h6 class="text-primary mb-2">{{ education.institution }}</h6>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">
+                                {{ education.start_date|date:"M Y" }} - 
+                                {% if education.end_date %}
+                                    {{ education.end_date|date:"M Y" }}
+                                {% else %}
+                                    <span class="badge bg-primary">Ongoing</span>
+                                {% endif %}
+                            </small>
+                            {% if education.grade %}
+                                <br><small class="text-muted">Grade: {{ education.grade }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if education.description %}
+                        <p class="mb-3">{{ education.description|linebreaks }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Skills -->
+            {% if skills %}
+            <div class="cv-section">
+                <h4><i class="fas fa-star me-2"></i>Skills</h4>
+                {% regroup skills by category as skill_groups %}
+                {% for group in skill_groups %}
+                    {% if group.grouper %}
+                        <h6 class="fw-bold mt-3 mb-2">{{ group.grouper }}</h6>
+                    {% endif %}
+                    <div class="mb-3">
+                        {% for skill in group.list %}
+                            <span class="badge bg-primary skill-badge">
+                                {{ skill.name }}
+                                {% if skill.level != 'intermediate' %}
+                                    <small>({{ skill.get_level_display }})</small>
+                                {% endif %}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Empty State -->
+            {% if not profile.summary and not work_experiences and not educations and not skills %}
+            <div class="text-center py-5">
+                <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Your CV is Empty</h4>
+                <p class="text-muted">Add your information to see your CV preview here.</p>
+                <a href="{% url 'profile' %}" class="btn btn-primary">
+                    <i class="fas fa-edit me-2"></i>Start Building Your CV
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .navbar, footer, .btn, .d-flex .btn {
+        display: none !important;
+    }
+    .cv-preview {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .container {
+        max-width: 100% !important;
+    }
+    body {
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+    .cv-section h4 {
+        page-break-after: avoid;
+    }
+    .experience-item, .education-item {
+        page-break-inside: avoid;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}

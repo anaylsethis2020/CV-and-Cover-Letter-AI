@@ -1,0 +1,158 @@
+{% extends 'profiles/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profile - CV and Cover Letter AI{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-user-edit me-2"></i>Build Your CV Profile</h2>
+            <a href="{% url 'cv_preview' %}" class="btn btn-outline-primary">
+                <i class="fas fa-eye me-2"></i>Preview CV
+            </a>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <!-- Profile Information Section -->
+            <div class="form-section">
+                <h3><i class="fas fa-user me-2"></i>Personal Information</h3>
+                {% crispy profile_form %}
+            </div>
+
+            <!-- Work Experience Section -->
+            <div class="form-section">
+                <h3><i class="fas fa-briefcase me-2"></i>Work Experience</h3>
+                <div id="work-formset">
+                    {{ work_formset.management_form }}
+                    {% for form in work_formset %}
+                        <div class="formset-form">
+                            {% if forloop.first %}
+                                <h5 class="mb-3">Experience #{{ forloop.counter }}</h5>
+                            {% else %}
+                                <h5 class="mb-3">Experience #{{ forloop.counter }}</h5>
+                            {% endif %}
+                            
+                            {% crispy form %}
+                            
+                            {% if work_formset.can_delete and form.instance.pk %}
+                                <div class="delete-checkbox">
+                                    <div class="form-check">
+                                        {{ form.DELETE }}
+                                        <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                                            <i class="fas fa-trash me-1"></i>Delete this experience
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-add-more" data-target="#work-formset">
+                    <i class="fas fa-plus me-2"></i>Add Another Experience
+                </button>
+            </div>
+
+            <!-- Education Section -->
+            <div class="form-section">
+                <h3><i class="fas fa-graduation-cap me-2"></i>Education</h3>
+                <div id="education-formset">
+                    {{ education_formset.management_form }}
+                    {% for form in education_formset %}
+                        <div class="formset-form">
+                            <h5 class="mb-3">Education #{{ forloop.counter }}</h5>
+                            
+                            {% crispy form %}
+                            
+                            {% if education_formset.can_delete and form.instance.pk %}
+                                <div class="delete-checkbox">
+                                    <div class="form-check">
+                                        {{ form.DELETE }}
+                                        <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                                            <i class="fas fa-trash me-1"></i>Delete this education
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-add-more" data-target="#education-formset">
+                    <i class="fas fa-plus me-2"></i>Add Another Education
+                </button>
+            </div>
+
+            <!-- Skills Section -->
+            <div class="form-section">
+                <h3><i class="fas fa-star me-2"></i>Skills</h3>
+                <p class="text-muted mb-3">Add your technical and soft skills with proficiency levels.</p>
+                <div id="skill-formset">
+                    {{ skill_formset.management_form }}
+                    {% for form in skill_formset %}
+                        <div class="formset-form">
+                            <h6 class="mb-3">Skill #{{ forloop.counter }}</h6>
+                            
+                            {% crispy form %}
+                            
+                            {% if skill_formset.can_delete and form.instance.pk %}
+                                <div class="delete-checkbox">
+                                    <div class="form-check">
+                                        {{ form.DELETE }}
+                                        <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                                            <i class="fas fa-trash me-1"></i>Delete this skill
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-add-more" data-target="#skill-formset">
+                    <i class="fas fa-plus me-2"></i>Add Another Skill
+                </button>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save me-2"></i>Save CV Profile
+                </button>
+                <a href="{% url 'home' %}" class="btn btn-secondary btn-lg ms-2">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle end date field based on "is current" checkbox for work experience
+    const currentCheckboxes = document.querySelectorAll('input[name*="is_current"]');
+    
+    currentCheckboxes.forEach(checkbox => {
+        const formRow = checkbox.closest('.formset-form');
+        const endDateField = formRow.querySelector('input[name*="end_date"]');
+        
+        function toggleEndDate() {
+            if (checkbox.checked) {
+                endDateField.disabled = true;
+                endDateField.value = '';
+                endDateField.closest('.form-group').style.opacity = '0.5';
+            } else {
+                endDateField.disabled = false;
+                endDateField.closest('.form-group').style.opacity = '1';
+            }
+        }
+        
+        // Initial state
+        toggleEndDate();
+        
+        // Listen for changes
+        checkbox.addEventListener('change', toggleEndDate);
+    });
+});
+</script>
+{% endblock %}

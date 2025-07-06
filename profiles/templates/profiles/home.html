@@ -1,0 +1,83 @@
+{% extends 'profiles/base.html' %}
+
+{% block title %}Home - CV and Cover Letter AI{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto text-center">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">
+                <i class="fas fa-file-alt text-primary me-3"></i>
+                CV & Cover Letter AI
+            </h1>
+            <p class="lead">Build professional CVs and cover letters with ease using our intelligent platform.</p>
+            <hr class="my-4">
+            <p>Create, customize, and download your professional documents in minutes.</p>
+            
+            {% if user.is_authenticated %}
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-edit fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">Build Your Profile</h5>
+                                <p class="card-text">Enter your personal information, experience, education, and skills.</p>
+                                <a href="{% url 'profile' %}" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i>Edit Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-eye fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">Preview Your CV</h5>
+                                <p class="card-text">See how your CV looks and make adjustments as needed.</p>
+                                <a href="{% url 'cv_preview' %}" class="btn btn-success">
+                                    <i class="fas fa-eye me-2"></i>Preview CV
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <a class="btn btn-primary btn-lg" href="{% url 'admin:login' %}" role="button">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login to Get Started
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+<div class="row mt-5">
+    <div class="col-lg-10 mx-auto">
+        <h3 class="text-center mb-4">Quick Start Guide</h3>
+        <div class="row">
+            <div class="col-md-4 text-center mb-3">
+                <div class="bg-light p-3 rounded">
+                    <i class="fas fa-user-circle fa-2x text-primary mb-2"></i>
+                    <h5>1. Complete Profile</h5>
+                    <p class="small">Add your personal information and contact details.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-3">
+                <div class="bg-light p-3 rounded">
+                    <i class="fas fa-briefcase fa-2x text-warning mb-2"></i>
+                    <h5>2. Add Experience</h5>
+                    <p class="small">Include your work history, education, and skills.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-3">
+                <div class="bg-light p-3 rounded">
+                    <i class="fas fa-download fa-2x text-success mb-2"></i>
+                    <h5>3. Preview & Use</h5>
+                    <p class="small">Review your CV and use it for applications.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
