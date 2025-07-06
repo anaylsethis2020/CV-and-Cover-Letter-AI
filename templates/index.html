@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV and Cover Letter AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CV and Cover Letter AI</h1>
+            <p>Create professional CVs and cover letters with AI assistance</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('cv')">CV Generator</button>
+            <button class="tab-button" onclick="showTab('cover-letter')">Cover Letter Generator</button>
+        </div>
+
+        <!-- CV Form -->
+        <div id="cv-tab" class="tab-content active">
+            <form id="cv-form" class="form-container">
+                <h2>Personal Information</h2>
+                <div class="form-grid">
+                    <input type="text" id="full_name" placeholder="Full Name" required>
+                    <input type="email" id="email" placeholder="Email Address" required>
+                    <input type="tel" id="phone" placeholder="Phone Number" required>
+                    <input type="text" id="location" placeholder="Location (City, State)" required>
+                    <input type="url" id="linkedin" placeholder="LinkedIn Profile">
+                    <input type="url" id="website" placeholder="Personal Website">
+                </div>
+
+                <h2>Professional Summary</h2>
+                <textarea id="summary" placeholder="Brief professional summary..." rows="4"></textarea>
+
+                <h2>Work Experience</h2>
+                <div id="experience-container">
+                    <div class="experience-item">
+                        <input type="text" placeholder="Job Title" class="job-title">
+                        <input type="text" placeholder="Company Name" class="company">
+                        <input type="text" placeholder="Duration (e.g., Jan 2020 - Present)" class="duration">
+                        <textarea placeholder="Key responsibilities and achievements..." class="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <button type="button" onclick="addExperience()">Add Experience</button>
+
+                <h2>Education</h2>
+                <div id="education-container">
+                    <div class="education-item">
+                        <input type="text" placeholder="Degree" class="degree">
+                        <input type="text" placeholder="Institution" class="institution">
+                        <input type="text" placeholder="Year" class="year">
+                    </div>
+                </div>
+                <button type="button" onclick="addEducation()">Add Education</button>
+
+                <h2>Skills</h2>
+                <textarea id="skills" placeholder="List your key skills separated by commas..." rows="3"></textarea>
+
+                <div class="form-actions">
+                    <button type="button" onclick="previewCV()">Preview CV</button>
+                    <button type="button" onclick="initiatePayment('cv')" class="premium-btn">Download PDF ($9.99)</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Cover Letter Form -->
+        <div id="cover-letter-tab" class="tab-content">
+            <form id="cover-letter-form" class="form-container">
+                <h2>Cover Letter Details</h2>
+                <div class="form-grid">
+                    <input type="text" id="cl_full_name" placeholder="Your Full Name" required>
+                    <input type="email" id="cl_email" placeholder="Your Email" required>
+                    <input type="text" id="cl_phone" placeholder="Your Phone" required>
+                    <input type="text" id="cl_address" placeholder="Your Address" required>
+                </div>
+
+                <div class="form-grid">
+                    <input type="text" id="hiring_manager" placeholder="Hiring Manager Name">
+                    <input type="text" id="company_name" placeholder="Company Name" required>
+                    <input type="text" id="position" placeholder="Position Applied For" required>
+                    <input type="date" id="date">
+                </div>
+
+                <h2>Letter Content</h2>
+                <textarea id="opening_paragraph" placeholder="Opening paragraph - why you're writing..." rows="3"></textarea>
+                <textarea id="body_paragraph" placeholder="Body paragraph - your qualifications and experience..." rows="4"></textarea>
+                <textarea id="closing_paragraph" placeholder="Closing paragraph - call to action..." rows="3"></textarea>
+
+                <div class="form-actions">
+                    <button type="button" onclick="previewCoverLetter()">Preview Cover Letter</button>
+                    <button type="button" onclick="initiatePayment('cover-letter')" class="premium-btn">Download PDF ($9.99)</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="preview-section" class="preview-container" style="display: none;">
+            <h2>Preview</h2>
+            <div id="preview-content"></div>
+            <button onclick="closePreview()">Close Preview</button>
+        </div>
+
+        <!-- Payment Modal -->
+        <div id="payment-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closePaymentModal()">&times;</span>
+                <h2>Premium PDF Export</h2>
+                <p>Unlock professional PDF export for $9.99</p>
+                <div id="card-element">
+                    <!-- Stripe Elements will create form elements here -->
+                </div>
+                <div id="card-errors" role="alert"></div>
+                <button id="submit-payment" class="premium-btn">Pay $9.99</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Initialize Stripe
+        const stripe = Stripe('{{ stripe_publishable_key }}');
+        const elements = stripe.elements();
+        
+        // Setup Stripe elements when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupStripeElements();
+        });
+    </script>
+</body>
+</html>

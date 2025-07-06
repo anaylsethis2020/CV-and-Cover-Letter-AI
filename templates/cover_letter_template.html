@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter - {{ cl_full_name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1in;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            margin-bottom: 40px;
+        }
+        
+        .sender-info {
+            text-align: right;
+            margin-bottom: 30px;
+        }
+        
+        .sender-info div {
+            margin-bottom: 2px;
+        }
+        
+        .sender-name {
+            font-weight: bold;
+            font-size: 12pt;
+        }
+        
+        .date {
+            margin-bottom: 30px;
+            text-align: right;
+        }
+        
+        .recipient-info {
+            margin-bottom: 30px;
+        }
+        
+        .recipient-info div {
+            margin-bottom: 2px;
+        }
+        
+        .subject {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .salutation {
+            margin-bottom: 20px;
+        }
+        
+        .letter-body {
+            text-align: justify;
+        }
+        
+        .paragraph {
+            margin-bottom: 20px;
+            text-indent: 0;
+        }
+        
+        .closing {
+            margin-top: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .signature {
+            font-weight: bold;
+        }
+        
+        .company-highlight {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .position-highlight {
+            font-style: italic;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="sender-info">
+            <div class="sender-name">{{ cl_full_name or "Your Name" }}</div>
+            {% if cl_address %}<div>{{ cl_address }}</div>{% endif %}
+            {% if cl_phone %}<div>{{ cl_phone }}</div>{% endif %}
+            {% if cl_email %}<div>{{ cl_email }}</div>{% endif %}
+        </div>
+        
+        <div class="date">
+            {{ date or "Date" }}
+        </div>
+        
+        <div class="recipient-info">
+            {% if hiring_manager %}
+            <div>{{ hiring_manager }}</div>
+            <div>Hiring Manager</div>
+            {% endif %}
+            {% if company_name %}
+            <div class="company-highlight">{{ company_name }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="subject">
+        <strong>Subject: Application for {% if position %}<span class="position-highlight">{{ position }}</span>{% else %}Position{% endif %}</strong>
+    </div>
+
+    <div class="salutation">
+        Dear {% if hiring_manager %}{{ hiring_manager }}{% else %}Hiring Manager{% endif %},
+    </div>
+
+    <div class="letter-body">
+        {% if opening_paragraph %}
+        <div class="paragraph">
+            {{ opening_paragraph }}
+        </div>
+        {% else %}
+        <div class="paragraph">
+            I am writing to express my strong interest in the <span class="position-highlight">{{ position or "position" }}</span> at <span class="company-highlight">{{ company_name or "your company" }}</span>. With my background and experience, I am confident that I would be a valuable addition to your team.
+        </div>
+        {% endif %}
+
+        {% if body_paragraph %}
+        <div class="paragraph">
+            {{ body_paragraph }}
+        </div>
+        {% else %}
+        <div class="paragraph">
+            Throughout my career, I have developed strong skills and experience that align well with the requirements of this role. I am particularly drawn to <span class="company-highlight">{{ company_name or "your company" }}</span> because of its reputation for excellence and innovation in the industry.
+        </div>
+        {% endif %}
+
+        {% if closing_paragraph %}
+        <div class="paragraph">
+            {{ closing_paragraph }}
+        </div>
+        {% else %}
+        <div class="paragraph">
+            I would welcome the opportunity to discuss how my skills and enthusiasm can contribute to <span class="company-highlight">{{ company_name or "your company" }}</span>'s continued success. Thank you for considering my application. I look forward to hearing from you soon.
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="closing">
+        <div>Sincerely,</div>
+        <div class="signature">{{ cl_full_name or "Your Name" }}</div>
+    </div>
+</body>
+</html>
