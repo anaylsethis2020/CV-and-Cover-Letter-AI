@@ -1,19 +1,18 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('cover-letter-form');
-    const resultBox = document.getElementById('result-box');
-    const output = document.getElementById('cover-letter-output');
-    const loading = document.getElementById('loading');
-    const button = document.getElementById('generate-btn');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("cover-letter-form");
+  const output = document.getElementById("cover-letter-output");
+  const responseSection = document.getElementById("response-section");
 
-    form.addEventListener('submit', function () {
-        loading.classList.remove('hidden');
-        button.disabled = true;
-    });
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    // Optional: Add loading message
+    output.textContent = "Generating your cover letter...";
+    responseSection.classList.remove("hidden");
+
+    // Simulate delay or trigger server endpoint later
+    setTimeout(() => {
+      output.textContent = "✅ This is where your AI-generated cover letter will appear (after OpenAI API is wired in).";
+    }, 1000);
+  });
 });
-
-function copyToClipboard() {
-    const text = document.getElementById("cover-letter-output").innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        alert("Cover letter copied to clipboard!");
-    });
-}
