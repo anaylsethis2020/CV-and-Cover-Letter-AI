@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cover Letter Builder</title>
+    <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Generate Your Cover Letter</h1>
+        <form id="cover-letter-form" method="POST">
+            {% csrf_token %}
+            {{ profile_form.as_p }}
+            {{ prompt_form.as_p }}
+            <button type="submit" id="generate-btn">Generate Cover Letter</button>
+        </form>
+
+        <div id="loading" class="hidden">Generating your letter...</div>
+
+        <div id="result-box" class="hidden">
+            <h2>Your Cover Letter:</h2>
+            <pre id="cover-letter-output"></pre>
+            <button onclick="copyToClipboard()">📋 Copy Letter</button>
+        </div>
+    </div>
+    <script src="{% static 'core/js/main.js' %}"></script>
+</body>
+</html>
