@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV and Cover Letter AI Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Cover Letter Generator</h1>
+            <p>Generate professional cover letters tailored to your job applications</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Job Details</h2>
+                <form id="coverLetterForm">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title *</label>
+                        <input type="text" id="jobTitle" name="jobTitle" required 
+                               placeholder="e.g., Software Engineer, Marketing Manager">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">Company Name *</label>
+                        <input type="text" id="company" name="company" required 
+                               placeholder="e.g., Google, Microsoft, Acme Corp">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tone">Tone</label>
+                        <select id="tone" name="tone">
+                            <option value="professional">Professional</option>
+                            <option value="enthusiastic">Enthusiastic</option>
+                            <option value="confident">Confident</option>
+                            <option value="friendly">Friendly</option>
+                            <option value="formal">Formal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description (Optional)</label>
+                        <textarea id="jobDescription" name="jobDescription" rows="4" 
+                                  placeholder="Paste the job description here to get a more tailored cover letter..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">Your Key Experience (Optional)</label>
+                        <textarea id="experience" name="experience" rows="3" 
+                                  placeholder="Briefly describe your relevant experience and skills..."></textarea>
+                    </div>
+
+                    <button type="submit" id="generateBtn" class="primary-btn">
+                        <span class="btn-text">Generate Cover Letter</span>
+                        <span class="loading-spinner" style="display: none;">⏳</span>
+                    </button>
+                </form>
+            </section>
+
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <div class="preview-header">
+                    <h2>Generated Cover Letter</h2>
+                    <div class="action-buttons">
+                        <button id="regenerateBtn" class="secondary-btn">🔄 Regenerate</button>
+                        <button id="editBtn" class="secondary-btn">✏️ Edit Manually</button>
+                        <button id="downloadBtn" class="primary-btn">📄 Download</button>
+                    </div>
+                </div>
+                
+                <div class="preview-box">
+                    <div id="coverLetterPreview" contenteditable="false" class="cover-letter-content">
+                        <!-- Generated cover letter will appear here -->
+                    </div>
+                </div>
+
+                <div class="edit-controls" id="editControls" style="display: none;">
+                    <button id="saveEditBtn" class="primary-btn">✅ Save Changes</button>
+                    <button id="cancelEditBtn" class="secondary-btn">❌ Cancel</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
