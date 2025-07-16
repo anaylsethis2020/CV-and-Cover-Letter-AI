@@ -3,10 +3,11 @@ from django.shortcuts import render
 from .forms import UserProfileForm, CoverLetterPromptForm
 import openai
 import os
+from dotenv import load_dotenv
 from django.conf import settings
 
-# Optional: use environment variable or directly paste the key for now
-openai.api_key = "YOUR_REAL_API_KEY_HERE"  # ⚠️ Replace with your actual OpenAI API key
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def cover_letter_prompt_view(request):
     profile_form = UserProfileForm()
@@ -32,15 +33,15 @@ def cover_letter_prompt_view(request):
             """
 
             try:
-                response = openai.ChatCompletion.create(
+                response = openai.chat.completions.create(
                     model="gpt-4",
                     messages=[
-                        {"role": "system", "content": "You are a helpful cover letter generator."},
+                        {"role": "system", "content": "You are a helpful cover letter writing assistant."},
                         {"role": "user", "content": user_input}
                     ],
                     temperature=0.7
                 )
-                cover_letter = response['choices'][0]['message']['content'].strip()
+                cover_letter = response.choices[0].message.content.strip()
 
             except Exception as e:
                 cover_letter = f"⚠️ Error generating cover letter: {str(e)}"
