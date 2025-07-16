@@ -51,3 +51,37 @@ def cover_letter_prompt_view(request):
         'prompt_form': prompt_form,
         'cover_letter': cover_letter,
     })
+import stripe
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+# Load the Stripe secret key from .env
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@csrf_exempt
+def create_checkout_session(request):
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[{
+                'price_data': {
+                    'currency': 'gbp',
+                    'product_data': {
+                        'name': 'AI Cover Letter Generator',
+                    },
+                    'unit_amount': 299,  # £2.99
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url='http://127.0.0.1:8000/success/',
+            cancel_url='http://127.0.0.1:8000/cancel/',
+        )
+        return JsonResponse({'id': checkout_session.id})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def payment_success_view(request):
+    return render(request, 'core/success.html')
+
+def payment_cancel_view(request):
+    return render(request, 'core/cancel.html')
