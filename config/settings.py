@@ -21,11 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
+
 import os
 from dotenv import load_dotenv
 import dj_database_url
 
-load_dotenv()
+load_dotenv()  # This loads variables from .env
+
+# Load secret keys from environment
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-m8r47tykn#8bw8+*r^crg!3cl@+t5z%*cruvd*q3@@f$n!nf&_')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')

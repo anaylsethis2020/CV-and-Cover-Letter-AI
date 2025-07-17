@@ -57,7 +57,8 @@ import stripe
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-# Load the Stripe secret key from .env
+
+# Load the Stripe secret key from Django settings
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @csrf_exempt
