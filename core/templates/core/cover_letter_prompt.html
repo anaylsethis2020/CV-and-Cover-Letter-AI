@@ -16,7 +16,18 @@
     {% if cover_letter %}
       <div id="generated-letter" style="margin-top: 2rem; padding: 1rem; background: #f4f4f4; border-left: 4px solid #3b82f6;">
         <h2>Your Generated Cover Letter</h2>
-        <pre style="white-space: pre-wrap;">{{ cover_letter }}</pre>
+        {% if not unlocked %}
+          <p><strong>Unlock your cover letter for £2.99:</strong></p>
+          <form action="/create-checkout-session/" method="POST">
+            {% csrf_token %}
+            <button type="submit" id="checkout-button">Pay with Stripe</button>
+          </form>
+          <div id="locked-letter" style="margin-top:1rem; color:#888;">
+            <em>Your cover letter will be revealed after payment.</em>
+          </div>
+        {% else %}
+          <pre style="white-space: pre-wrap;">{{ cover_letter }}</pre>
+        {% endif %}
       </div>
     {% endif %}
 </body>

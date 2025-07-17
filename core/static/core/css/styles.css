@@ -34,7 +34,7 @@ input, textarea, select {
   font-size: 1rem;
 }
 
-.submit-btn {
+.submit-btn, #checkout-button {
   background-color: #3b82f6;
   color: white;
   padding: 12px 18px;
@@ -44,9 +44,10 @@ input, textarea, select {
   font-size: 1rem;
   width: 100%;
   transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
-.submit-btn:hover {
+.submit-btn:hover, #checkout-button:hover {
   background-color: #2563eb;
 }
 
@@ -54,10 +55,32 @@ input, textarea, select {
   display: none;
 }
 
-#cover-letter-output {
+#cover-letter-output, #unlocked-letter pre, #generated-letter pre {
   margin-top: 1rem;
   padding: 1rem;
   background: #f1f5f9;
   border-left: 4px solid #3b82f6;
   white-space: pre-wrap;
+  border-radius: 6px;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.5rem;
+    max-width: 98vw;
+  }
+  h1, h2 {
+    font-size: 1.3rem;
+  }
+  input, textarea, select {
+    font-size: 0.95rem;
+  }
+  .submit-btn, #checkout-button {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+  }
+  #cover-letter-output, #unlocked-letter pre, #generated-letter pre {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
 }

@@ -3,16 +3,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const output = document.getElementById("cover-letter-output");
   const responseSection = document.getElementById("response-section");
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    // Optional: Add loading message
-    output.textContent = "Generating your cover letter...";
-    responseSection.classList.remove("hidden");
-
-    // Simulate delay or trigger server endpoint later
-    setTimeout(() => {
-      output.textContent = "✅ This is where your AI-generated cover letter will appear (after OpenAI API is wired in).";
-    }, 1000);
-  });
+  // Stripe checkout button handler
+  const checkoutBtn = document.getElementById("checkout-button");
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", function (e) {
+      checkoutBtn.disabled = true;
+      checkoutBtn.textContent = "Redirecting to payment...";
+    });
+  }
 });
+  // Form feedback (optional, for generator page)
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      const btn = form.querySelector("button[type='submit']");
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Generating...";
+      }
+    });
+  }

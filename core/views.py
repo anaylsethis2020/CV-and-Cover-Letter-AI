@@ -19,11 +19,8 @@ def cover_letter_prompt_view(request):
         prompt_form = CoverLetterPromptForm(request.POST)
 
         if profile_form.is_valid() and prompt_form.is_valid():
-            # Extract cleaned data
             profile_data = profile_form.cleaned_data
             prompt_data = prompt_form.cleaned_data
-
-            # Format your message to OpenAI
             user_input = f"""
             Write a {prompt_data['tone']} cover letter for {profile_data['full_name']}, 
             who lives at {profile_data['address']}, and can be contacted via {profile_data['email']}.
@@ -31,7 +28,6 @@ def cover_letter_prompt_view(request):
             LinkedIn: {profile_data['linkedin']} | Phone: {profile_data['phone']}
             Summary: {profile_data['summary']}
             """
-
             try:
                 response = openai.chat.completions.create(
                     model="gpt-4",
@@ -42,14 +38,20 @@ def cover_letter_prompt_view(request):
                     temperature=0.7
                 )
                 cover_letter = response.choices[0].message.content.strip()
-
+                # Store cover letter in session, lock until payment
+                request.session['cover_letter'] = cover_letter
+                request.session['cover_letter_unlocked'] = False
             except Exception as e:
                 cover_letter = f"⚠️ Error generating cover letter: {str(e)}"
+                request.session['cover_letter'] = cover_letter
+                request.session['cover_letter_unlocked'] = False
 
+    # Only show locked letter, not unlocked
     return render(request, 'core/cover_letter_prompt.html', {
         'profile_form': profile_form,
         'prompt_form': prompt_form,
-        'cover_letter': cover_letter,
+        'cover_letter': request.session.get('cover_letter'),
+        'unlocked': request.session.get('cover_letter_unlocked', False),
     })
 import stripe
 from django.http import JsonResponse
@@ -81,7 +83,12 @@ def create_checkout_session(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 def payment_success_view(request):
-    return render(request, 'core/success.html')
+    # Unlock cover letter in session
+    request.session['cover_letter_unlocked'] = True
+    return render(request, 'core/success.html', {
+        'cover_letter': request.session.get('cover_letter'),
+        'unlocked': True,
+    })
 
 def payment_cancel_view(request):
     return render(request, 'core/cancel.html')
