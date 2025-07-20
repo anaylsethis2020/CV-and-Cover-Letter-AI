@@ -1,15 +1,19 @@
+{# success.html: Stripe payment success page #}
 {% extends "base.html" %}
 
 {% block content %}
   <div class="container">
+    <!-- Payment confirmation message -->
     <h2>Payment Successful ✅</h2>
     <p>Thank you! You’ve unlocked your AI-generated cover letter.</p>
     {% if cover_letter and unlocked %}
+      <!-- Show the unlocked cover letter after payment -->
       <div id="unlocked-letter" style="margin-top:2rem; padding:1rem; background:#f4f4f4; border-left:4px solid #3b82f6;">
         <h3>Your Cover Letter</h3>
         <pre style="white-space: pre-wrap;">{{ cover_letter }}</pre>
       </div>
     {% endif %}
+    <!-- Link to return to generator page -->
     <p><a href="/">Go back to the generator</a></p>
   </div>
 {% endblock %}

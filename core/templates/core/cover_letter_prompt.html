@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Cover Letter Prompt</title>
+    <!-- cover_letter_prompt.html: Main generator page for user input and AI cover letter -->
 </head>
 <body>
+    <!-- Page title and instructions -->
     <h1>Enter Your Details</h1>
+    <!-- Form for user profile and job prompt -->
     <form method="post">
-        {% csrf_token %}
-        {{ profile_form.as_p }}
-        {{ prompt_form.as_p }}
+        {% csrf_token %} <!-- CSRF token for security -->
+        {{ profile_form.as_p }} <!-- Renders user profile fields -->
+        {{ prompt_form.as_p }} <!-- Renders job prompt fields -->
         <button type="submit">Generate Cover Letter</button>
     </form>
 
+    <!-- Section for displaying the generated cover letter -->
     {% if cover_letter %}
       <div id="generated-letter" style="margin-top: 2rem; padding: 1rem; background: #f4f4f4; border-left: 4px solid #3b82f6;">
         <h2>Your Generated Cover Letter</h2>
         {% if not unlocked %}
+          <!-- Stripe payment unlock logic -->
           <p><strong>Unlock your cover letter for £2.99:</strong></p>
           <form action="/create-checkout-session/" method="POST">
             {% csrf_token %}
@@ -26,6 +31,7 @@
             <em>Your cover letter will be revealed after payment.</em>
           </div>
         {% else %}
+          <!-- Unlocked: show the generated cover letter -->
           <pre style="white-space: pre-wrap;">{{ cover_letter }}</pre>
         {% endif %}
       </div>

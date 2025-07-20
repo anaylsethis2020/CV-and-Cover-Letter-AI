@@ -1,3 +1,7 @@
+
+/* styles.css: Main stylesheet for CV & Cover Letter AI Builder */
+
+/* Body styles: font, background, color */
 body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #f4f7fa;
@@ -6,6 +10,7 @@ body {
   color: #333;
 }
 
+/* Container: centers content, adds padding and shadow */
 .container {
   max-width: 720px;
   margin: 50px auto;
@@ -15,15 +20,18 @@ body {
   box-shadow: 0 0 15px rgba(0,0,0,0.05);
 }
 
+/* Headings: center and color */
 h1, h2 {
   text-align: center;
   color: #2b3945;
 }
 
+/* Form group spacing */
 .form-group {
   margin-bottom: 20px;
 }
 
+/* Input, textarea, select: full width, padding, border, rounded */
 input, textarea, select {
   width: 100%;
   padding: 10px;
@@ -34,6 +42,7 @@ input, textarea, select {
   font-size: 1rem;
 }
 
+/* Buttons: color, padding, rounded, transition */
 .submit-btn, #checkout-button {
   background-color: #3b82f6;
   color: white;
@@ -47,14 +56,17 @@ input, textarea, select {
   margin-top: 10px;
 }
 
+/* Button hover effect */
 .submit-btn:hover, #checkout-button:hover {
   background-color: #2563eb;
 }
 
+/* Hide elements with .hidden class */
 .hidden {
   display: none;
 }
 
+/* Cover letter output: styled box for generated text */
 #cover-letter-output, #unlocked-letter pre, #generated-letter pre {
   margin-top: 1rem;
   padding: 1rem;
@@ -64,6 +76,7 @@ input, textarea, select {
   border-radius: 6px;
 }
 
+/* Responsive styles for mobile devices */
 @media (max-width: 600px) {
   .container {
     padding: 1rem 0.5rem;
