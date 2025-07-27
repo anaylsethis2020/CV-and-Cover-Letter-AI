@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}CV Builder - CV AI Builder{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-file-alt me-2"></i>CV Builder
+        </h1>
+        <p class="lead mb-4">Create a professional CV with our intuitive builder. Upload your existing CV to auto-fill the form, or start from scratch.</p>
+    </div>
+</div>
+
+<!-- CV Upload Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow border-primary">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-upload me-2"></i>Upload Your Existing CV
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <p class="mb-2">Upload your current CV (PDF, DOCX, or TXT) and we'll automatically extract and fill in your information.</p>
+                        <div class="mb-3">
+                            <input type="file" class="form-control" id="cv-file-upload" accept=".pdf,.docx,.doc,.txt">
+                            <div class="form-text">Supported formats: PDF, DOCX, DOC, TXT (max 5MB)</div>
+                        </div>
+                        
+                        <!-- Progress bar -->
+                        <div class="progress mb-3" id="upload-progress" style="display: none;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        
+                        <!-- Upload status -->
+                        <div id="upload-status"></div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <button type="button" class="btn btn-success btn-lg" id="parse-cv-btn" disabled>
+                            <i class="fas fa-magic me-2"></i>Parse CV & Auto-Fill
+                        </button>
+                        <div class="mt-2">
+                            <small class="text-muted">Or start building manually below</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-user me-2"></i>Personal Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post" id="cv-form" data-auto-save enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.title|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Template selection would go here -->
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.first_name|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.last_name|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.email|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.phone|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    {{ form.address|as_crispy_field }}
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form.linkedin_url|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.github_url|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.website_url|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    {{ form.summary|as_crispy_field }}
+                    {{ form.skills|as_crispy_field }}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'cv_generator:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Create CV
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Upload your existing CV for instant auto-fill
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Use a clear, professional title
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Write a compelling summary in 2-3 sentences
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        List your most relevant skills
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Include contact information
+                    </li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Next Steps:</strong> After creating your CV, you can add work experience, education, and projects in the editor.
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow mt-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-robot me-2"></i>AI-Powered Features
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="small mb-2">Our AI can extract information from:</p>
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-file-pdf text-danger me-2"></i>PDF documents</li>
+                    <li><i class="fas fa-file-word text-primary me-2"></i>Word documents (.docx, .doc)</li>
+                    <li><i class="fas fa-file-alt text-secondary me-2"></i>Text files (.txt)</li>
+                </ul>
+                <div class="alert alert-warning alert-sm">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    <small>AI parsing requires OpenAI API key configuration</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('cv-file-upload');
+    const parseBtn = document.getElementById('parse-cv-btn');
+    const uploadProgress = document.getElementById('upload-progress');
+    const uploadStatus = document.getElementById('upload-status');
+    const progressBar = uploadProgress.querySelector('.progress-bar');
+    
+    // Enable parse button when file is selected
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            parseBtn.disabled = false;
+            parseBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Parse "' + this.files[0].name + '"';
+            showStatus('File selected. Click "Parse CV & Auto-Fill" to extract information.', 'info');
+        } else {
+            parseBtn.disabled = true;
+            parseBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Parse CV & Auto-Fill';
+            hideStatus();
+        }
+    });
+    
+    // Handle parse button click
+    parseBtn.addEventListener('click', function() {
+        const file = fileInput.files[0];
+        if (!file) {
+            showStatus('Please select a file first.', 'warning');
+            return;
+        }
+        
+        // Show progress
+        showProgress();
+        parseBtn.disabled = true;
+        parseBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Parsing...';
+        
+        // Create form data
+        const formData = new FormData();
+        formData.append('cv_file', file);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        // Send AJAX request
+        fetch('{% url "cv_generator:parse_cv_ajax" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideProgress();
+            
+            if (data.success) {
+                const extractedFields = data.debug ? data.debug.extracted_fields : [];
+                const message = `CV parsed successfully! Extracted: ${extractedFields.join(', ') || 'basic info'}. Form auto-filled with available data.`;
+                showStatus(message, 'success');
+                autoFillForm(data.data);
+                
+                // Log debug info to console for troubleshooting
+                console.log('CV parsing debug info:', data.debug);
+                console.log('Extracted data:', data.data);
+            } else {
+                showStatus('Error: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            hideProgress();
+            showStatus('Network error: ' + error.message, 'danger');
+        })
+        .finally(() => {
+            parseBtn.disabled = false;
+            parseBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Parse CV & Auto-Fill';
+        });
+    });
+    
+    function showProgress() {
+        uploadProgress.style.display = 'block';
+        progressBar.style.width = '100%';
+    }
+    
+    function hideProgress() {
+        uploadProgress.style.display = 'none';
+        progressBar.style.width = '0%';
+    }
+    
+    function showStatus(message, type) {
+        uploadStatus.innerHTML = `<div class="alert alert-${type} alert-sm">${message}</div>`;
+    }
+    
+    function hideStatus() {
+        uploadStatus.innerHTML = '';
+    }
+    
+    function autoFillForm(data) {
+        // Fill personal information
+        if (data.personal_info) {
+            const personal = data.personal_info;
+            fillField('id_first_name', personal.first_name);
+            fillField('id_last_name', personal.last_name);
+            fillField('id_email', personal.email);
+            fillField('id_phone', personal.phone);
+            fillField('id_address', personal.address);
+            fillField('id_linkedin_url', personal.linkedin_url);
+            fillField('id_github_url', personal.github_url);
+            fillField('id_website_url', personal.website_url);
+        }
+        
+        // Fill summary
+        fillField('id_summary', data.summary);
+        
+        // Fill skills
+        fillField('id_skills', data.skills);
+        
+        // Generate title if not provided
+        if (data.personal_info && data.personal_info.first_name && data.personal_info.last_name) {
+            const title = `${data.personal_info.first_name} ${data.personal_info.last_name} - CV`;
+            fillField('id_title', title);
+        }
+        
+        // Store experience, education, and projects data for later use
+        if (data.experience && data.experience.length > 0) {
+            sessionStorage.setItem('parsed_experience', JSON.stringify(data.experience));
+        }
+        if (data.education && data.education.length > 0) {
+            sessionStorage.setItem('parsed_education', JSON.stringify(data.education));
+        }
+        if (data.projects && data.projects.length > 0) {
+            sessionStorage.setItem('parsed_projects', JSON.stringify(data.projects));
+        }
+        
+        // Show info about additional data
+        if (data.experience || data.education || data.projects) {
+            showStatus(
+                'Personal information auto-filled! Additional sections (experience, education, projects) will be available in the CV editor after saving.',
+                'info'
+            );
+        }
+    }
+    
+    function fillField(fieldId, value) {
+        const field = document.getElementById(fieldId);
+        if (field && value) {
+            field.value = value;
+            // Trigger change event for any listeners
+            field.dispatchEvent(new Event('change'));
+        }
+    }
+});
+</script>
+{% endblock %} 

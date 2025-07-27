@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}CV AI Builder - Professional CV and Cover Letter Generator{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">
+            Create Professional CVs and Cover Letters with AI
+        </h1>
+        <p class="lead mb-4">
+            Build stunning CVs and generate personalized cover letters using advanced AI technology. 
+            Stand out from the crowd and land your dream job.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            {% if user.is_authenticated %}
+                <a href="{% url 'cv_generator:cv_builder' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>Create CV
+                </a>
+                <a href="{% url 'cv_generator:cover_letter_generator' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-envelope me-2"></i>Generate Cover Letter
+                </a>
+            {% else %}
+                <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Get Started Free
+                </a>
+                <a href="{% url 'users:login' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose CV AI Builder?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-magic fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">AI-Powered Generation</h5>
+                        <p class="card-text">
+                            Our advanced AI technology generates personalized cover letters 
+                            based on your CV and job requirements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-pdf fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Professional PDF Export</h5>
+                        <p class="card-text">
+                            Export your CVs and cover letters as professional PDF documents 
+                            with consistent formatting.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-templates fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Multiple Templates</h5>
+                        <p class="card-text">
+                            Choose from a variety of professional templates designed 
+                            for different industries and roles.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="how-it-works py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold">1</span>
+                    </div>
+                    <h5>Create Account</h5>
+                    <p>Sign up for free and start building your professional profile.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold">2</span>
+                    </div>
+                    <h5>Build Your CV</h5>
+                    <p>Use our intuitive builder to create a professional CV with your experience and skills.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold">3</span>
+                    </div>
+                    <h5>Generate Cover Letter</h5>
+                    <p>Let our AI create personalized cover letters based on job descriptions.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold">4</span>
+                    </div>
+                    <h5>Export & Apply</h5>
+                    <p>Download professional PDFs and submit your applications with confidence.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pricing Section -->
+<div class="pricing-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Choose Your Plan</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Free</h5>
+                        <h2 class="text-primary">$0</h2>
+                        <p class="text-muted">per month</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Basic CV builder</li>
+                            <li><i class="fas fa-check text-success me-2"></i>3 CV templates</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Basic cover letter generator</li>
+                            <li><i class="fas fa-check text-success me-2"></i>PDF export (limited)</li>
+                        </ul>
+                        <a href="{% url 'users:register' %}" class="btn btn-outline-primary">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow border-primary">
+                    <div class="card-body text-center">
+                        <span class="badge bg-primary position-absolute top-0 start-50 translate-middle">Popular</span>
+                        <h5 class="card-title">Premium</h5>
+                        <h2 class="text-primary">$9.99</h2>
+                        <p class="text-muted">per month</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Advanced CV builder</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Unlimited CV templates</li>
+                            <li><i class="fas fa-check text-success me-2"></i>AI-powered cover letter generator</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Unlimited PDF exports</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                        </ul>
+                        <a href="{% url 'payments:subscription_plans' %}" class="btn btn-primary">Choose Premium</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Enterprise</h5>
+                        <h2 class="text-primary">$29.99</h2>
+                        <p class="text-muted">per month</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Everything in Premium</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Team collaboration</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Advanced analytics</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Custom branding</li>
+                            <li><i class="fas fa-check text-success me-2"></i>API access</li>
+                        </ul>
+                        <a href="{% url 'payments:subscription_plans' %}" class="btn btn-outline-primary">Choose Enterprise</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

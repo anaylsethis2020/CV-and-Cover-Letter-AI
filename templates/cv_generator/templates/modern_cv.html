@@ -1,0 +1,383 @@
+{% load cv_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cv.first_name }} {{ cv.last_name }} - CV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+        
+        .cv-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2c5aa0;
+        }
+        
+        .name {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #2c5aa0;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .summary {
+            font-size: 1.1em;
+            line-height: 1.7;
+            color: #555;
+        }
+        
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .skill-tag {
+            background: #f0f8ff;
+            color: #2c5aa0;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #d0e0ff;
+        }
+        
+        .experience-item, .education-item, .project-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 8px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #2c5aa0;
+        }
+        
+        .item-company {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .item-date {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .item-description {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .certification-item, .award-item, .volunteering-item, .publication-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+        
+        .item-issuer {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        @media print {
+            .cv-container {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="name">{{ cv.first_name }} {{ cv.last_name }}</div>
+            <div class="title">{{ cv.title|default:"Professional CV" }}</div>
+            <div class="contact-info">
+                {% if cv.email %}
+                <div class="contact-item">
+                    <span>📧</span>
+                    <span>{{ cv.email }}</span>
+                </div>
+                {% endif %}
+                {% if cv.phone %}
+                <div class="contact-item">
+                    <span>📞</span>
+                    <span>{{ cv.phone }}</span>
+                </div>
+                {% endif %}
+                {% if cv.address %}
+                <div class="contact-item">
+                    <span>📍</span>
+                    <span>{{ cv.address }}</span>
+                </div>
+                {% endif %}
+                {% if cv.linkedin_url %}
+                <div class="contact-item">
+                    <span>💼</span>
+                    <span>{{ cv.linkedin_url }}</span>
+                </div>
+                {% endif %}
+                {% if cv.github_url %}
+                <div class="contact-item">
+                    <span>🐙</span>
+                    <span>{{ cv.github_url }}</span>
+                </div>
+                {% endif %}
+                {% if cv.website_url %}
+                <div class="contact-item">
+                    <span>🌐</span>
+                    <span>{{ cv.website_url }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Summary -->
+        {% if cv.summary %}
+        <div class="section">
+            <div class="section-title">Professional Summary</div>
+            <div class="summary">{{ cv.summary }}</div>
+        </div>
+        {% endif %}
+
+        <!-- Skills -->
+        {% if cv.skills %}
+        <div class="section">
+            <div class="section-title">Skills</div>
+            <div class="skills">
+                {% for skill in cv.skills|split:"," %}
+                <span class="skill-tag">{{ skill|strip }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Experience -->
+        {% if cv.experience %}
+        <div class="section">
+            <div class="section-title">Professional Experience</div>
+            {% for exp in cv.experience %}
+            <div class="experience-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title">{{ exp.job_title|default:exp.position }}</div>
+                        <div class="item-company">{{ exp.company }}</div>
+                    </div>
+                    <div class="item-date">
+                        {{ exp.start_date|date:"M Y" }} - 
+                        {% if exp.current or exp.end_date == "Present" %}
+                            Present
+                        {% else %}
+                            {{ exp.end_date|date:"M Y" }}
+                        {% endif %}
+                    </div>
+                </div>
+                {% if exp.description %}
+                <div class="item-description">{{ exp.description }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Education -->
+        {% if cv.education %}
+        <div class="section">
+            <div class="section-title">Education</div>
+            {% for edu in cv.education %}
+            <div class="education-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title">{{ edu.degree }}</div>
+                        <div class="item-company">{{ edu.institution }}</div>
+                        {% if edu.field_of_study %}
+                        <div class="item-company">{{ edu.field_of_study }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="item-date">
+                        {{ edu.start_date|date:"M Y" }} - {{ edu.end_date|date:"M Y" }}
+                    </div>
+                </div>
+                {% if edu.description %}
+                <div class="item-description">{{ edu.description }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Projects -->
+        {% if cv.projects %}
+        <div class="section">
+            <div class="section-title">Projects</div>
+            {% for project in cv.projects %}
+            <div class="project-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title">{{ project.name }}</div>
+                        {% if project.technologies %}
+                        <div class="item-company">{{ project.technologies }}</div>
+                        {% endif %}
+                    </div>
+                    {% if project.url %}
+                    <div class="item-date">
+                        <a href="{{ project.url }}" target="_blank">View Project</a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if project.description %}
+                <div class="item-description">{{ project.description }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Certifications -->
+        {% if cv.certifications %}
+        <div class="section">
+            <div class="section-title">Certifications</div>
+            {% for cert in cv.certifications %}
+            <div class="certification-item">
+                <div class="item-name">{{ cert.name }}</div>
+                <div class="item-issuer">{{ cert.issuer }}</div>
+                {% if cert.issue_date %}
+                <div class="item-date">{{ cert.issue_date|date:"M Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Awards -->
+        {% if cv.awards %}
+        <div class="section">
+            <div class="section-title">Awards & Recognition</div>
+            {% for award in cv.awards %}
+            <div class="award-item">
+                <div class="item-name">{{ award.title }}</div>
+                <div class="item-issuer">{{ award.awarding_body }}</div>
+                {% if award.year %}
+                <div class="item-date">{{ award.year }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Volunteering -->
+        {% if cv.volunteering %}
+        <div class="section">
+            <div class="section-title">Volunteering & Leadership</div>
+            {% for vol in cv.volunteering %}
+            <div class="volunteering-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title">{{ vol.role_title }}</div>
+                        <div class="item-company">{{ vol.organization }}</div>
+                    </div>
+                    <div class="item-date">
+                        {{ vol.start_date|date:"M Y" }} - 
+                        {% if vol.current %}
+                            Present
+                        {% else %}
+                            {{ vol.end_date|date:"M Y" }}
+                        {% endif %}
+                    </div>
+                </div>
+                {% if vol.description %}
+                <div class="item-description">{{ vol.description }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Publications -->
+        {% if cv.publications %}
+        <div class="section">
+            <div class="section-title">Publications</div>
+            {% for pub in cv.publications %}
+            <div class="publication-item">
+                <div class="item-name">{{ pub.title }}</div>
+                <div class="item-issuer">{{ pub.publisher }}</div>
+                {% if pub.publication_date %}
+                <div class="item-date">{{ pub.publication_date|date:"M Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html> 

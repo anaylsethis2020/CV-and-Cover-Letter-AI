@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Cover Letter Generator - CV AI Builder{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-envelope me-2"></i>AI Cover Letter Generator
+        </h1>
+        <p class="lead mb-4">Generate a personalized cover letter using AI based on your CV and the job description.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-briefcase me-2"></i>Job Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post" id="cover-letter-form">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="cv_id" class="form-label">Select CV</label>
+                        <select class="form-control" name="cv_id" id="cv_id" required>
+                            <option value="">Choose a CV...</option>
+                            {% for cv in user_cvs %}
+                                <option value="{{ cv.id }}">{{ cv.title }} - {{ cv.first_name }} {{ cv.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if not user_cvs %}
+                            <div class="text-muted mt-2">
+                                <i class="fas fa-info-circle me-1"></i>
+                                You need to create a CV first. <a href="{% url 'cv_generator:cv_builder' %}">Create CV</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {{ form.job_title|as_crispy_field }}
+                    {{ form.company_name|as_crispy_field }}
+                    {{ form.job_description|as_crispy_field }}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'cv_generator:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg" id="generate-cover-letter-btn" {% if not user_cvs %}disabled{% endif %}>
+                            <i class="fas fa-magic me-2"></i>Generate Cover Letter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-robot me-2"></i>AI Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Provide the complete job description
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Include company name and job title
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Select your most relevant CV
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Review and customize the generated letter
+                    </li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Note:</strong> AI cover letter generation requires an OpenAI API key to be configured.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cvSelect = document.getElementById('cv_id');
+    const generateBtn = document.getElementById('generate-cover-letter-btn');
+    
+    if (cvSelect) {
+        cvSelect.addEventListener('change', function() {
+            if (this.value) {
+                generateBtn.disabled = false;
+            } else {
+                generateBtn.disabled = true;
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,106 @@
+<!-- Work Experience Entry Template -->
+<div class="experience-entry border rounded p-4 mb-4 position-relative">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <h6 class="fw-bold text-primary mb-0">
+            <i class="fas fa-briefcase me-2"></i>Work Experience Entry
+        </h6>
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)" title="Remove this entry">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Job Title *</label>
+                <input type="text" class="form-control" name="job_title" 
+                       placeholder="e.g., Senior Software Engineer" required>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Company *</label>
+                <input type="text" class="form-control" name="company" 
+                       placeholder="e.g., Google Inc." required>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Location</label>
+                <input type="text" class="form-control" name="location" 
+                       placeholder="e.g., San Francisco, CA">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Start Date *</label>
+                <input type="date" class="form-control" name="start_date" required>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">End Date</label>
+                <input type="date" class="form-control" name="end_date" id="end-date">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="mb-3">
+                <div class="form-check mt-4 pt-1">
+                    <input class="form-check-input" type="checkbox" name="current" 
+                           onchange="toggleEndDate(this)">
+                    <label class="form-check-label fw-semibold">
+                        Current Role
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Key Responsibilities & Achievements *</label>
+        <textarea class="form-control" name="description" rows="4" 
+                  placeholder="• Led a team of 5 developers to deliver...&#10;• Increased system performance by 40%...&#10;• Implemented new features using React and Node.js..." 
+                  required></textarea>
+        <div class="form-text">Use bullet points to highlight your key achievements and responsibilities</div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Employment Type</label>
+                <select class="form-select" name="employment_type">
+                    <option value="">Select type</option>
+                    <option value="full-time">Full-time</option>
+                    <option value="part-time">Part-time</option>
+                    <option value="contract">Contract</option>
+                    <option value="freelance">Freelance</option>
+                    <option value="internship">Internship</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Industry</label>
+                <input type="text" class="form-control" name="industry" 
+                       placeholder="e.g., Technology, Finance, Healthcare">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleEndDate(checkbox) {
+    const endDateInput = checkbox.closest('.experience-entry').querySelector('input[name="end_date"]');
+    if (checkbox.checked) {
+        endDateInput.disabled = true;
+        endDateInput.value = '';
+        endDateInput.placeholder = 'Present';
+    } else {
+        endDateInput.disabled = false;
+        endDateInput.placeholder = '';
+    }
+}
+</script> 

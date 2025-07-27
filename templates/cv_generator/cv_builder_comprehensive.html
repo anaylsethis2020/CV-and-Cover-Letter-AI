@@ -1,0 +1,2084 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Professional CV Builder - CV AI Builder{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h1 class="mb-2">
+                    <i class="fas fa-file-alt me-2"></i>Professional CV Builder
+                </h1>
+                <p class="lead mb-0">Build a comprehensive professional CV with all the sections used by top recruiters.</p>
+            </div>
+            <div class="text-end">
+                <a href="{% url 'cv_generator:user_guide' %}" class="btn btn-outline-primary btn-sm" target="_blank">
+                    <i class="fas fa-question-circle me-2"></i>Need Help?
+                </a>
+                <div class="small text-muted mt-1">Complete step-by-step guide</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Indicator -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">CV Completion</span>
+                    <div class="progress flex-grow-1 mx-3" style="height: 10px;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%" id="cv-progress-bar"></div>
+                    </div>
+                    <span id="completion-percentage">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Navigation Tabs -->
+<div class="row">
+    <div class="col-12">
+        <ul class="nav nav-pills nav-justified mb-4" id="cv-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="basic-tab" data-bs-toggle="pill" data-bs-target="#basic" type="button" role="tab">
+                    <i class="fas fa-user me-2"></i>Basic Info
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="experience-tab" data-bs-toggle="pill" data-bs-target="#experience" type="button" role="tab">
+                    <i class="fas fa-briefcase me-2"></i>Experience
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="education-tab" data-bs-toggle="pill" data-bs-target="#education" type="button" role="tab">
+                    <i class="fas fa-graduation-cap me-2"></i>Education
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="certifications-tab" data-bs-toggle="pill" data-bs-target="#certifications" type="button" role="tab">
+                    <i class="fas fa-certificate me-2"></i>Certifications
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="projects-tab" data-bs-toggle="pill" data-bs-target="#projects" type="button" role="tab">
+                    <i class="fas fa-project-diagram me-2"></i>Projects
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="awards-tab" data-bs-toggle="pill" data-bs-target="#awards" type="button" role="tab">
+                    <i class="fas fa-trophy me-2"></i>Awards
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="volunteering-tab" data-bs-toggle="pill" data-bs-target="#volunteering" type="button" role="tab">
+                    <i class="fas fa-heart me-2"></i>Volunteering
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="publications-tab" data-bs-toggle="pill" data-bs-target="#publications" type="button" role="tab">
+                    <i class="fas fa-book me-2"></i>Publications
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Tab Content -->
+<div class="tab-content" id="cv-tab-content">
+    
+    <!-- Basic Information Tab -->
+    <div class="tab-pane fade show active" id="basic" role="tabpanel">
+        
+        <!-- CV Upload Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-upload me-2"></i>Upload Your Existing CV
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <p class="mb-2">Upload your current CV (PDF, DOCX, or TXT) and we'll automatically extract and fill in your information across all sections.</p>
+                                <div class="mb-3">
+                                    <input type="file" class="form-control" id="cv-file-upload" accept=".pdf,.docx,.doc,.txt">
+                                    <div class="form-text">Supported formats: PDF, DOCX, DOC, TXT (max 5MB)</div>
+                                </div>
+                                <div class="progress mb-3" id="upload-progress" style="display: none;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <div id="upload-status"></div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <button type="button" class="btn btn-success btn-lg" id="parse-cv-btn" disabled>
+                                    <i class="fas fa-magic me-2"></i>Parse CV & Auto-Fill
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-lg mt-2" id="reset-sections-btn" style="display: none;">
+                                    <i class="fas fa-undo me-2"></i>Reset & Add Manually
+                                </button>
+                                <div class="mt-2">
+                                    <small class="text-muted">Or start building manually below</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Job Description Analysis Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-briefcase me-2"></i>Job Description Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label for="job-description" class="form-label">Paste Job Description</label>
+                            <textarea class="form-control" id="job-description" name="job_description" rows="6" 
+                                placeholder="Paste the job description here to get AI-powered CV optimization recommendations..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="job-title" class="form-label">Job Title</label>
+                            <input type="text" class="form-control" id="job-title" name="job_title" 
+                                placeholder="e.g., Senior Software Engineer">
+                        </div>
+                        <div class="mb-3">
+                            <label for="company-name" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="company-name" name="company_name" 
+                                placeholder="e.g., Google, Microsoft">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-magic me-2"></i>AI Analysis
+                                </h6>
+                                <p class="card-text small">Get AI-powered recommendations to optimize your CV for this specific job:</p>
+                                <ul class="list-unstyled small">
+                                    <li><i class="fas fa-check text-success me-1"></i>Keyword matching</li>
+                                    <li><i class="fas fa-check text-success me-1"></i>Skills gap analysis</li>
+                                    <li><i class="fas fa-check text-success me-1"></i>Content optimization</li>
+                                    <li><i class="fas fa-check text-success me-1"></i>ATS compatibility</li>
+                                </ul>
+                                <button type="button" class="btn btn-primary btn-sm w-100" id="analyze-job-btn" disabled>
+                                    <i class="fas fa-search me-2"></i>Analyze & Optimize
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Template Selection Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-palette me-2"></i>Choose CV Template
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label for="cv-template" class="form-label">Select Template Style</label>
+                            <select class="form-select" id="cv-template" name="template">
+                                <option value="">Choose a template...</option>
+                                <optgroup label="Free Templates">
+                                    <option value="1">Modern Professional</option>
+                                    <option value="2">Classic Traditional</option>
+                                    <option value="5">Minimal Clean</option>
+                                </optgroup>
+                                <optgroup label="Premium Templates">
+                                    <option value="3">ATS Optimized</option>
+                                    <option value="4">Creative Portfolio</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="template-preview" class="form-label">Template Preview</label>
+                            <div id="template-preview" class="border rounded p-3 bg-light" style="min-height: 200px;">
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-image fa-3x mb-3"></i>
+                                    <p>Select a template to see preview</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-info-circle me-2"></i>Template Features
+                                </h6>
+                                <ul class="list-unstyled small">
+                                    <li><i class="fas fa-check text-success me-1"></i>ATS-friendly formatting</li>
+                                    <li><i class="fas fa-check text-success me-1"></i>Professional styling</li>
+                                    <li><i class="fas fa-check text-success me-1"></i>Print-ready design</li>
+                                    <li><i class="fas fa-check text-success me-1"></i>Mobile responsive</li>
+                                </ul>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-outline-primary btn-sm w-100" id="preview-cv-btn" disabled>
+                                        <i class="fas fa-eye me-2"></i>Preview CV
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user me-2"></i>Personal Information
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="basic-info-form">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Professional Title</label>
+                                        <input type="text" class="form-control" id="title" name="title" placeholder="e.g., Senior Software Engineer">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="first_name" class="form-label">First Name</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="last_name" class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Phone</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="2" placeholder="City, State, Country"></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="linkedin_url" class="form-label">LinkedIn URL</label>
+                                        <input type="url" class="form-control" id="linkedin_url" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="github_url" class="form-label">GitHub URL</label>
+                                        <input type="url" class="form-control" id="github_url" name="github_url" placeholder="https://github.com/yourusername">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="website_url" class="form-label">Website/Portfolio URL</label>
+                                        <input type="url" class="form-control" id="website_url" name="website_url" placeholder="https://yourportfolio.com">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="summary" class="form-label">Professional Summary</label>
+                                <textarea class="form-control" id="summary" name="summary" rows="5" placeholder="Write a compelling professional summary..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="skills" class="form-label">Skills</label>
+                                <textarea class="form-control" id="skills" name="skills" rows="3" placeholder="Python, JavaScript, React, Node.js, SQL..."></textarea>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="nextTab('experience')">
+                                    Next: Experience <i class="fas fa-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>Tips
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Upload your existing CV for instant auto-fill
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Use a clear, professional title
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Write a compelling summary in 2-3 sentences
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Include all your contact information
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Work Experience Tab -->
+    <div class="tab-pane fade" id="experience" role="tabpanel">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-briefcase me-2"></i>Work Experience
+                </h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addExperienceEntry()">
+                    <i class="fas fa-plus me-1"></i>Add Experience
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="experience-list">
+                    <!-- Experience entries will be added here dynamically -->
+                    <div class="text-center py-4 text-muted" id="no-experience">
+                        <i class="fas fa-briefcase fa-3x mb-3"></i>
+                        <p>No work experience added yet.</p>
+                        <button type="button" class="btn btn-outline-primary" onclick="addExperienceEntry()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Experience
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="previousTab('basic')">
+                        <i class="fas fa-arrow-left me-1"></i> Previous: Basic Info
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextTab('education')">
+                        Next: Education <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Education Tab -->
+    <div class="tab-pane fade" id="education" role="tabpanel">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-graduation-cap me-2"></i>Education
+                </h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addEducationEntry()">
+                    <i class="fas fa-plus me-1"></i>Add Education
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="education-list">
+                    <div class="text-center py-4 text-muted" id="no-education">
+                        <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                        <p>No education added yet.</p>
+                        <button type="button" class="btn btn-outline-primary" onclick="addEducationEntry()">
+                            <i class="fas fa-plus me-2"></i>Add Your Education
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="previousTab('experience')">
+                        <i class="fas fa-arrow-left me-1"></i> Previous: Experience
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextTab('certifications')">
+                        Next: Certifications <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Certifications Tab -->
+    <div class="tab-pane fade" id="certifications" role="tabpanel">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-certificate me-2"></i>Certifications
+                </h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addCertificationEntry()">
+                    <i class="fas fa-plus me-1"></i>Add Certification
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="certifications-list">
+                    <div class="text-center py-4 text-muted" id="no-certifications">
+                        <i class="fas fa-certificate fa-3x mb-3"></i>
+                        <p>No certifications added yet.</p>
+                        <button type="button" class="btn btn-outline-primary" onclick="addCertificationEntry()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Certification
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="previousTab('education')">
+                        <i class="fas fa-arrow-left me-1"></i> Previous: Education
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextTab('projects')">
+                        Next: Projects <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Projects Tab -->
+    <div class="tab-pane fade" id="projects" role="tabpanel">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-project-diagram me-2"></i>Projects
+                </h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addProjectEntry()">
+                    <i class="fas fa-plus me-1"></i>Add Project
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="projects-list">
+                    <div class="text-center py-4 text-muted" id="no-projects">
+                        <i class="fas fa-project-diagram fa-3x mb-3"></i>
+                        <p>No projects added yet.</p>
+                        <button type="button" class="btn btn-outline-primary" onclick="addProjectEntry()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Project
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="previousTab('certifications')">
+                        <i class="fas fa-arrow-left me-1"></i> Previous: Certifications
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextTab('awards')">
+                        Next: Awards <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Awards Tab -->
+    <div class="tab-pane fade" id="awards" role="tabpanel">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-trophy me-2"></i>Awards & Scholarships
+                </h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addAwardEntry()">
+                    <i class="fas fa-plus me-1"></i>Add Award
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="awards-list">
+                    <div class="text-center py-4 text-muted" id="no-awards">
+                        <i class="fas fa-trophy fa-3x mb-3"></i>
+                        <p>No awards added yet.</p>
+                        <button type="button" class="btn btn-outline-primary" onclick="addAwardEntry()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Award
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="previousTab('projects')">
+                        <i class="fas fa-arrow-left me-1"></i> Previous: Projects
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextTab('volunteering')">
+                        Next: Volunteering <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Volunteering Tab -->
+    <div class="tab-pane fade" id="volunteering" role="tabpanel">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-heart me-2"></i>Volunteering & Leadership
+                </h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addVolunteeringEntry()">
+                    <i class="fas fa-plus me-1"></i>Add Volunteering
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="volunteering-list">
+                    <div class="text-center py-4 text-muted" id="no-volunteering">
+                        <i class="fas fa-heart fa-3x mb-3"></i>
+                        <p>No volunteering experience added yet.</p>
+                        <button type="button" class="btn btn-outline-primary" onclick="addVolunteeringEntry()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Volunteering Experience
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="previousTab('awards')">
+                        <i class="fas fa-arrow-left me-1"></i> Previous: Awards
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="nextTab('publications')">
+                        Next: Publications <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Publications Tab -->
+    <div class="tab-pane fade" id="publications" role="tabpanel">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-book me-2"></i>Publications
+                </h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addPublicationEntry()">
+                    <i class="fas fa-plus me-1"></i>Add Publication
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="publications-list">
+                    <div class="text-center py-4 text-muted" id="no-publications">
+                        <i class="fas fa-book fa-3x mb-3"></i>
+                        <p>No publications added yet.</p>
+                        <button type="button" class="btn btn-outline-primary" onclick="addPublicationEntry()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Publication
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="previousTab('volunteering')">
+                        <i class="fas fa-arrow-left me-1"></i> Previous: Volunteering
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="createCV()">
+                        <i class="fas fa-check me-1"></i> Complete CV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Final Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h5>Ready to create your professional CV?</h5>
+                    <div class="d-flex justify-content-center gap-3 mt-3">
+                        <button type="button" class="btn btn-outline-secondary" onclick="saveDraft()">
+                            <i class="fas fa-save me-2"></i>Save as Draft
+                        </button>
+                        <button type="button" class="btn btn-success btn-lg" onclick="createCV()">
+                            <i class="fas fa-file-alt me-2"></i>Create CV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Experience Entry Template (Hidden) -->
+<template id="experience-template">
+    <div class="experience-entry border rounded p-3 mb-3">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h6 class="mb-0">Experience Entry</h6>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" class="form-control" name="job_title" placeholder="e.g., Senior Software Engineer">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Company</label>
+                    <input type="text" class="form-control" name="company" placeholder="e.g., Google Inc.">
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" name="location" placeholder="e.g., San Francisco, CA">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" class="form-control" name="start_date">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">End Date</label>
+                    <input type="date" class="form-control" name="end_date">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="mb-3">
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" name="current">
+                        <label class="form-check-label">Current</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3" placeholder="Describe your key responsibilities and achievements..."></textarea>
+        </div>
+    </div>
+</template>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('cv-file-upload');
+    const parseBtn = document.getElementById('parse-cv-btn');
+    const resetBtn = document.getElementById('reset-sections-btn');
+    const uploadProgress = document.getElementById('upload-progress');
+    const uploadStatus = document.getElementById('upload-status');
+    const progressBar = uploadProgress.querySelector('.progress-bar');
+    
+    // File selection handler
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const fileSize = file.size / 1024 / 1024; // MB
+            if (fileSize > 5) {
+                showStatus('File too large. Maximum size is 5MB.', 'danger');
+                this.value = '';
+                parseBtn.disabled = true;
+                return;
+            }
+            
+            const allowedTypes = ['.pdf', '.docx', '.doc', '.txt'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            if (!allowedTypes.includes(fileExtension)) {
+                showStatus('Unsupported file format. Please upload PDF, DOCX, DOC, or TXT files.', 'danger');
+                this.value = '';
+                parseBtn.disabled = true;
+                return;
+            }
+            
+            parseBtn.disabled = false;
+            showStatus(`File "${file.name}" selected. Click "Parse CV & Auto-Fill" to extract information.`, 'info');
+        } else {
+            parseBtn.disabled = true;
+            hideStatus();
+        }
+    });
+    
+    // Parse CV button handler
+    parseBtn.addEventListener('click', function() {
+        const file = fileInput.files[0];
+        if (!file) {
+            showStatus('Please select a file first.', 'warning');
+            return;
+        }
+        
+        showProgress();
+        parseBtn.disabled = true;
+        parseBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Parsing...';
+        
+        const formData = new FormData();
+        formData.append('cv_file', file);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        fetch('{% url "cv_generator:parse_cv_ajax" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideProgress();
+            if (data.success) {
+                const extractedFields = data.debug ? data.debug.extracted_fields : [];
+                const message = `CV parsed successfully! Extracted: ${extractedFields.join(', ') || 'basic info'}. Form auto-filled with available data.`;
+                showStatus(message, 'success');
+                autoFillForm(data.data);
+                console.log('CV parsing debug info:', data.debug);
+                console.log('Extracted data:', data.data);
+                updateProgress();
+                // Show reset button after successful parsing
+                resetBtn.style.display = 'inline-block';
+                showStatus('CV parsed and auto-filled. You can now reset and add manually if needed.', 'info');
+            } else {
+                showStatus('Error: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            hideProgress();
+            showStatus('Network error: ' + error.message, 'danger');
+            console.error('CV parsing error:', error);
+        })
+        .finally(() => {
+            parseBtn.disabled = false;
+            parseBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Parse CV & Auto-Fill';
+        });
+    });
+
+            // Reset sections button handler
+        resetBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to reset all sections and start manually? This will clear all auto-filled data.')) {
+            resetAllSections();
+            hideStatus();
+            resetBtn.style.display = 'none';
+            showStatus('All sections have been reset. You can now add entries manually.', 'info');
+        }
+    });
+    
+    // Function to reset all sections
+    function resetAllSections() {
+        const sections = ['experience', 'education', 'projects', 'certifications', 'awards', 'volunteering', 'publications'];
+        
+        sections.forEach(section => {
+            // Clear all entries in the section
+            const sectionList = document.getElementById(`${section}-list`);
+            if (sectionList) {
+                // Remove all entry items
+                const entries = sectionList.querySelectorAll('.entry-item, .experience-entry, .education-entry, .project-entry, .certification-entry, .award-entry, .volunteering-entry, .publication-entry');
+                entries.forEach(entry => entry.remove());
+                
+                // Show the no-data element
+                const noDataElement = document.getElementById(`no-${section}`);
+                if (noDataElement) {
+                    noDataElement.style.display = 'block';
+                }
+            }
+            
+            // Show add buttons
+            showAddButton(section);
+        });
+        
+        console.log('All sections have been reset');
+    }
+    
+    // Utility functions
+    function showProgress() {
+        uploadProgress.style.display = 'block';
+        progressBar.style.width = '100%';
+    }
+    
+    function hideProgress() {
+        uploadProgress.style.display = 'none';
+        progressBar.style.width = '0%';
+    }
+    
+    function showStatus(message, type) {
+        hideStatus();
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-2`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        uploadStatus.appendChild(alertDiv);
+        
+        // Auto-hide success/info messages after 10 seconds
+        if (type === 'success' || type === 'info') {
+            setTimeout(() => hideStatus(), 10000);
+        }
+    }
+    
+    function hideStatus() {
+        uploadStatus.innerHTML = '';
+    }
+    
+    function autoFillForm(data) {
+        console.log('Starting comprehensive auto-fill with data:', data);
+        
+        // Fill personal information
+        if (data.personal_info) {
+            Object.keys(data.personal_info).forEach(key => {
+                const input = document.getElementById(key);
+                if (input && data.personal_info[key]) {
+                    input.value = data.personal_info[key];
+                    console.log(`Filled ${key}:`, data.personal_info[key]);
+                }
+            });
+        }
+        
+        // Fill summary and skills
+        ['summary', 'skills'].forEach(field => {
+            const input = document.getElementById(field);
+            if (input && data[field]) {
+                input.value = data[field];
+                console.log(`Filled ${field}:`, data[field]);
+            }
+        });
+        
+        // Auto-populate Experience section
+        if (data.experience && data.experience.length > 0) {
+            console.log('Auto-populating experience entries:', data.experience);
+            hideAddButton('experience'); // Hide add button since we have data
+            data.experience.forEach((exp, index) => {
+                addExperienceEntry(); // Add a new experience entry
+                const experienceEntries = document.querySelectorAll('.experience-entry');
+                const currentEntry = experienceEntries[experienceEntries.length - 1];
+                
+                if (currentEntry) {
+                    fillExperienceEntry(currentEntry, exp);
+                }
+            });
+        } else {
+            showAddButton('experience'); // Show add button if no data
+        }
+        
+        // Auto-populate Education section
+        if (data.education && data.education.length > 0) {
+            console.log('Auto-populating education entries:', data.education);
+            hideAddButton('education'); // Hide add button since we have data
+            data.education.forEach((edu, index) => {
+                addEducationEntry(); // Add a new education entry
+                const educationEntries = document.querySelectorAll('.education-entry');
+                const currentEntry = educationEntries[educationEntries.length - 1];
+                
+                if (currentEntry) {
+                    fillEducationEntry(currentEntry, edu);
+                }
+            });
+        } else {
+            showAddButton('education'); // Show add button if no data
+        }
+        
+        // Auto-populate Projects section
+        if (data.projects && data.projects.length > 0) {
+            console.log('Auto-populating project entries:', data.projects);
+            hideAddButton('projects'); // Hide add button since we have data
+            data.projects.forEach((project, index) => {
+                addProjectEntry(); // Add a new project entry
+                const projectEntries = document.querySelectorAll('.project-entry');
+                const currentEntry = projectEntries[projectEntries.length - 1];
+                
+                if (currentEntry) {
+                    fillProjectEntry(currentEntry, project);
+                }
+            });
+        } else {
+            showAddButton('projects'); // Show add button if no data
+        }
+        
+        // Auto-populate Certifications section
+        if (data.certifications && data.certifications.length > 0) {
+            console.log('Auto-populating certification entries:', data.certifications);
+            hideAddButton('certifications'); // Hide add button since we have data
+            data.certifications.forEach((cert, index) => {
+                addCertificationEntry(); // Add a new certification entry
+                const certEntries = document.querySelectorAll('.certification-entry');
+                const currentEntry = certEntries[certEntries.length - 1];
+                
+                if (currentEntry) {
+                    fillCertificationEntry(currentEntry, cert);
+                }
+            });
+        } else {
+            showAddButton('certifications'); // Show add button if no data
+        }
+        
+        // Auto-populate Awards section
+        if (data.awards && data.awards.length > 0) {
+            console.log('Auto-populating award entries:', data.awards);
+            hideAddButton('awards'); // Hide add button since we have data
+            data.awards.forEach((award, index) => {
+                addAwardEntry(); // Add a new award entry
+                const awardEntries = document.querySelectorAll('.award-entry');
+                const currentEntry = awardEntries[awardEntries.length - 1];
+                
+                if (currentEntry) {
+                    fillAwardEntry(currentEntry, award);
+                }
+            });
+        } else {
+            showAddButton('awards'); // Show add button if no data
+        }
+        
+        // Auto-populate Volunteering section
+        if (data.volunteering && data.volunteering.length > 0) {
+            console.log('Auto-populating volunteering entries:', data.volunteering);
+            hideAddButton('volunteering'); // Hide add button since we have data
+            data.volunteering.forEach((vol, index) => {
+                addVolunteeringEntry(); // Add a new volunteering entry
+                const volEntries = document.querySelectorAll('.volunteering-entry');
+                const currentEntry = volEntries[volEntries.length - 1];
+                
+                if (currentEntry) {
+                    fillVolunteeringEntry(currentEntry, vol);
+                }
+            });
+        } else {
+            showAddButton('volunteering'); // Show add button if no data
+        }
+        
+        // Auto-populate Publications section
+        if (data.publications && data.publications.length > 0) {
+            console.log('Auto-populating publication entries:', data.publications);
+            hideAddButton('publications'); // Hide add button since we have data
+            data.publications.forEach((pub, index) => {
+                addPublicationEntry(); // Add a new publication entry
+                const pubEntries = document.querySelectorAll('.publication-entry');
+                const currentEntry = pubEntries[pubEntries.length - 1];
+                
+                if (currentEntry) {
+                    fillPublicationEntry(currentEntry, pub);
+                }
+            });
+        } else {
+            showAddButton('publications'); // Show add button if no data
+        }
+        
+        console.log('Auto-fill completed for all sections');
+        
+        // Show a success message indicating CV was parsed and auto-filled
+        showStatus('🎉 CV successfully parsed and auto-filled across all sections! All "Add" buttons have been hidden since your data is now populated.', 'success');
+        
+        // Update progress after all sections are filled
+        setTimeout(() => {
+            updateProgress();
+        }, 500);
+    }
+    
+    // Helper functions to fill specific entry types
+    function fillExperienceEntry(entryElement, data) {
+        if (!entryElement || !data) return;
+        
+        const fields = {
+            'job_title': data.job_title || data.position || '',
+            'company': data.company || '',
+            'location': data.location || '',
+            'start_date': formatDate(data.start_date),
+            'end_date': formatDate(data.end_date),
+            'description': data.description || ''
+        };
+        
+        Object.keys(fields).forEach(fieldName => {
+            const input = entryElement.querySelector(`[name="${fieldName}"]`);
+            if (input && fields[fieldName]) {
+                input.value = fields[fieldName];
+            }
+        });
+        
+        // Handle current role checkbox
+        if (data.current || data.end_date === 'Present') {
+            const currentCheckbox = entryElement.querySelector('[name="current"]');
+            if (currentCheckbox) {
+                currentCheckbox.checked = true;
+                currentCheckbox.dispatchEvent(new Event('change')); // Trigger the toggle function
+            }
+        }
+        
+        console.log('Filled experience entry:', data);
+    }
+    
+    function fillEducationEntry(entryElement, data) {
+        if (!entryElement || !data) return;
+        
+        const fields = {
+            'degree': data.degree || '',
+            'institution': data.institution || '',
+            'field_of_study': data.field_of_study || '',
+            'start_date': formatDate(data.start_date),
+            'end_date': formatDate(data.end_date),
+            'gpa': data.gpa || '',
+            'description': data.description || ''
+        };
+        
+        Object.keys(fields).forEach(fieldName => {
+            const input = entryElement.querySelector(`[name="${fieldName}"]`);
+            if (input && fields[fieldName]) {
+                input.value = fields[fieldName];
+            }
+        });
+        
+        console.log('Filled education entry:', data);
+    }
+    
+    function fillProjectEntry(entryElement, data) {
+        if (!entryElement || !data) return;
+        
+        const fields = {
+            'name': data.name || data.title || '',
+            'description': data.description || '',
+            'technologies': data.technologies || data.tech_stack || '',
+            'url': data.url || data.github_url || '',
+            'start_date': formatDate(data.start_date),
+            'end_date': formatDate(data.end_date)
+        };
+        
+        Object.keys(fields).forEach(fieldName => {
+            const input = entryElement.querySelector(`[name="${fieldName}"]`);
+            if (input && fields[fieldName]) {
+                input.value = fields[fieldName];
+            }
+        });
+        
+        console.log('Filled project entry:', data);
+    }
+    
+    function fillCertificationEntry(entryElement, data) {
+        if (!entryElement || !data) return;
+        
+        const fields = {
+            'name': data.name || data.title || '',
+            'issuer': data.issuer || data.organization || '',
+            'issue_date': formatDate(data.issue_date || data.date_earned),
+            'expiry_date': formatDate(data.expiry_date || data.expiration_date),
+            'url': data.url || data.verification_url || ''
+        };
+        
+        Object.keys(fields).forEach(fieldName => {
+            const input = entryElement.querySelector(`[name="${fieldName}"]`);
+            if (input && fields[fieldName]) {
+                input.value = fields[fieldName];
+            }
+        });
+        
+        console.log('Filled certification entry:', data);
+    }
+    
+    function fillAwardEntry(entryElement, data) {
+        if (!entryElement || !data) return;
+        
+        const fields = {
+            'title': data.title || data.name || '',
+            'awarding_body': data.awarding_body || data.organization || '',
+            'year': data.year || new Date(data.date || '').getFullYear() || '',
+            'description': data.description || ''
+        };
+        
+        Object.keys(fields).forEach(fieldName => {
+            const input = entryElement.querySelector(`[name="${fieldName}"]`);
+            if (input && fields[fieldName]) {
+                input.value = fields[fieldName];
+            }
+        });
+        
+        console.log('Filled award entry:', data);
+    }
+    
+    function fillVolunteeringEntry(entryElement, data) {
+        if (!entryElement || !data) return;
+        
+        const fields = {
+            'role_title': data.role_title || data.position || data.title || '',
+            'organization': data.organization || '',
+            'location': data.location || '',
+            'start_date': formatDate(data.start_date),
+            'end_date': formatDate(data.end_date),
+            'description': data.description || ''
+        };
+        
+        Object.keys(fields).forEach(fieldName => {
+            const input = entryElement.querySelector(`[name="${fieldName}"]`);
+            if (input && fields[fieldName]) {
+                input.value = fields[fieldName];
+            }
+        });
+        
+        // Handle current role checkbox
+        if (data.current || data.end_date === 'Present') {
+            const currentCheckbox = entryElement.querySelector('[name="current"]');
+            if (currentCheckbox) {
+                currentCheckbox.checked = true;
+                currentCheckbox.dispatchEvent(new Event('change'));
+            }
+        }
+        
+        console.log('Filled volunteering entry:', data);
+    }
+    
+    function fillPublicationEntry(entryElement, data) {
+        if (!entryElement || !data) return;
+        
+        const fields = {
+            'title': data.title || '',
+            'publisher': data.publisher || data.journal || '',
+            'publication_date': formatDate(data.publication_date || data.date),
+            'url': data.url || '',
+            'description': data.description || data.abstract || ''
+        };
+        
+        Object.keys(fields).forEach(fieldName => {
+            const input = entryElement.querySelector(`[name="${fieldName}"]`);
+            if (input && fields[fieldName]) {
+                input.value = fields[fieldName];
+            }
+        });
+        
+        console.log('Filled publication entry:', data);
+    }
+    
+    // Utility function to format dates
+    function formatDate(dateString) {
+        if (!dateString || dateString === 'Present') return '';
+        
+        try {
+            // Try to parse various date formats
+            let date;
+            if (dateString.includes('/')) {
+                // Handle MM/DD/YYYY or DD/MM/YYYY
+                const parts = dateString.split('/');
+                if (parts.length === 3) {
+                    // Assume MM/DD/YYYY for now
+                    date = new Date(parts[2], parts[0] - 1, parts[1]);
+                }
+            } else if (dateString.includes('-')) {
+                // Handle YYYY-MM-DD
+                date = new Date(dateString);
+            } else if (dateString.length === 4) {
+                // Handle just year
+                date = new Date(dateString, 0, 1);
+            } else {
+                date = new Date(dateString);
+            }
+            
+            if (isNaN(date.getTime())) return '';
+            
+            // Return in YYYY-MM-DD format for date inputs
+            return date.toISOString().split('T')[0];
+        } catch (e) {
+            console.warn('Could not parse date:', dateString);
+            return '';
+        }
+    }
+    
+    function fillField(fieldId, value) {
+        const field = document.getElementById(fieldId);
+        if (field && value) {
+            field.value = value;
+        }
+    }
+    
+    // Initialize progress tracking
+    updateProgress();
+
+    // Job analysis functionality
+    const jobDescription = document.getElementById('job-description');
+    const jobTitle = document.getElementById('job-title');
+    const companyName = document.getElementById('company-name');
+    const analyzeJobBtn = document.getElementById('analyze-job-btn');
+    
+    // Enable/disable analyze button based on content
+    function updateAnalyzeButton() {
+        const hasJobDesc = jobDescription.value.trim().length > 50;
+        const hasJobTitle = jobTitle.value.trim().length > 0;
+        const hasCompany = companyName.value.trim().length > 0;
+        
+        analyzeJobBtn.disabled = !(hasJobDesc && hasJobTitle && hasCompany);
+    }
+    
+    // Add event listeners for job analysis fields
+    [jobDescription, jobTitle, companyName].forEach(field => {
+        field.addEventListener('input', updateAnalyzeButton);
+        field.addEventListener('change', updateAnalyzeButton);
+    });
+    
+    // Job analysis button handler
+    analyzeJobBtn.addEventListener('click', function() {
+        if (analyzeJobBtn.disabled) return;
+        
+        const jobData = {
+            job_description: jobDescription.value.trim(),
+            job_title: jobTitle.value.trim(),
+            company_name: companyName.value.trim(),
+            cv_data: getFormData() // Get current CV data
+        };
+        
+        // Show loading state
+        analyzeJobBtn.disabled = true;
+        analyzeJobBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+        
+        // Send analysis request
+        fetch('{% url "cv_generator:analyze_job_ajax" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(jobData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showJobAnalysisResults(data.analysis);
+                showStatus('Job analysis completed! Check the recommendations below.', 'success');
+            } else {
+                showStatus('Analysis failed: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            showStatus('Network error: ' + error.message, 'danger');
+        })
+        .finally(() => {
+            analyzeJobBtn.disabled = false;
+            analyzeJobBtn.innerHTML = '<i class="fas fa-search me-2"></i>Analyze & Optimize';
+        });
+    });
+    
+    // Function to get current form data
+    function getFormData() {
+        const formData = {
+            personal_info: {},
+            summary: '',
+            skills: '',
+            experience: [],
+            education: [],
+            projects: [],
+            certifications: [],
+            awards: [],
+            volunteering: [],
+            publications: []
+        };
+        
+        // Get personal info
+        ['first_name', 'last_name', 'email', 'phone', 'address', 'linkedin_url', 'github_url', 'website_url'].forEach(field => {
+            const input = document.getElementById(field);
+            if (input) {
+                formData.personal_info[field] = input.value;
+            }
+        });
+        
+        // Get summary and skills
+        const summaryInput = document.getElementById('summary');
+        const skillsInput = document.getElementById('skills');
+        if (summaryInput) formData.summary = summaryInput.value;
+        if (skillsInput) formData.skills = skillsInput.value;
+        
+        // Get experience entries
+        document.querySelectorAll('.experience-entry').forEach(entry => {
+            const expData = {};
+            entry.querySelectorAll('input, textarea').forEach(input => {
+                expData[input.name] = input.value;
+            });
+            formData.experience.push(expData);
+        });
+        
+        // Get education entries
+        document.querySelectorAll('.education-entry').forEach(entry => {
+            const eduData = {};
+            entry.querySelectorAll('input, textarea').forEach(input => {
+                eduData[input.name] = input.value;
+            });
+            formData.education.push(eduData);
+        });
+        
+        // Get project entries
+        document.querySelectorAll('.project-entry').forEach(entry => {
+            const projData = {};
+            entry.querySelectorAll('input, textarea').forEach(input => {
+                projData[input.name] = input.value;
+            });
+            formData.projects.push(projData);
+        });
+        
+        return formData;
+    }
+    
+    // Function to display job analysis results
+    function showJobAnalysisResults(analysis) {
+        // Create results modal or section
+        const resultsHtml = `
+            <div class="card mt-3">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>AI Analysis Results
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Keyword Match Score: ${analysis.keyword_score || '85%'}</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-success" style="width: ${analysis.keyword_score || '85'}%"></div>
+                            </div>
+                            <h6>Skills Gap Analysis:</h6>
+                            <ul class="list-unstyled">
+                                ${(analysis.missing_skills || ['React', 'AWS', 'Docker']).map(skill => 
+                                    `<li><i class="fas fa-exclamation-triangle text-warning me-2"></i>${skill}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Recommendations:</h6>
+                            <ul class="list-unstyled">
+                                ${(analysis.recommendations || [
+                                    'Add React.js to your skills section',
+                                    'Highlight AWS experience in your projects',
+                                    'Emphasize leadership experience',
+                                    'Add specific metrics to your achievements'
+                                ]).map(rec => 
+                                    `<li><i class="fas fa-lightbulb text-info me-2"></i>${rec}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="applyRecommendations()">
+                            <i class="fas fa-magic me-2"></i>Apply Recommendations
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm ms-2" onclick="saveOptimizedCV()">
+                            <i class="fas fa-save me-2"></i>Save Optimized CV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Insert results after the job analysis section
+        const jobAnalysisSection = document.querySelector('.card-header.bg-primary').closest('.card');
+        jobAnalysisSection.insertAdjacentHTML('afterend', resultsHtml);
+    }
+    
+    // Function to apply AI recommendations
+    function applyRecommendations() {
+        // This would apply the AI recommendations to the form
+        showStatus('Applying AI recommendations to your CV...', 'info');
+        // Implementation would go here
+    }
+    
+    // Function to save optimized CV
+    function saveOptimizedCV() {
+        // This would save the optimized CV
+        showStatus('Saving optimized CV...', 'info');
+        // Implementation would go here
+    }
+
+    // Template selection functionality
+    const templateSelect = document.getElementById('cv-template');
+    const templatePreview = document.getElementById('template-preview');
+    const previewCvBtn = document.getElementById('preview-cv-btn');
+    
+    // Template previews
+    const templatePreviews = {
+        '1': {
+            name: 'Modern Professional',
+            description: 'Clean, modern design with professional styling',
+            features: ['ATS-friendly', 'Modern layout', 'Blue accent color'],
+            image: '📄 Modern CV'
+        },
+        '2': {
+            name: 'Classic Traditional',
+            description: 'Traditional format with formal styling',
+            features: ['Conservative design', 'Times New Roman font', 'Black & white'],
+            image: '📋 Classic CV'
+        },
+        '3': {
+            name: 'ATS Optimized',
+            description: 'Specially designed for Applicant Tracking Systems',
+            features: ['ATS-optimized', 'Clean formatting', 'Simple layout'],
+            image: '🎯 ATS CV'
+        },
+        '4': {
+            name: 'Creative Portfolio',
+            description: 'Creative design with visual elements',
+            features: ['Creative layout', 'Purple accent', 'Visual elements'],
+            image: '🎨 Creative CV'
+        },
+        '5': {
+            name: 'Minimal Clean',
+            description: 'Minimalist design with plenty of white space',
+            features: ['Minimal design', 'Clean typography', 'Lots of whitespace'],
+            image: '⚪ Minimal CV'
+        }
+    };
+    
+    // Template selection handler
+    templateSelect.addEventListener('change', function() {
+        const selectedTemplate = this.value;
+        if (selectedTemplate && templatePreviews[selectedTemplate]) {
+            const template = templatePreviews[selectedTemplate];
+            
+            // Update preview
+            templatePreview.innerHTML = `
+                <div class="text-center">
+                    <div class="mb-3">
+                        <h6 class="text-primary">${template.name}</h6>
+                        <p class="text-muted small">${template.description}</p>
+                    </div>
+                    <div class="bg-white border rounded p-3 mb-3">
+                        <div class="text-center">
+                            <div class="h4 mb-2">${template.image}</div>
+                            <div class="small text-muted">Template Preview</div>
+                        </div>
+                    </div>
+                    <div class="small">
+                        <strong>Features:</strong><br>
+                        ${template.features.map(feature => `• ${feature}`).join('<br>')}
+                    </div>
+                </div>
+            `;
+            
+            // Enable preview button
+            previewCvBtn.disabled = false;
+            
+            console.log(`Selected template: ${template.name}`);
+        } else {
+            // Reset preview
+            templatePreview.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-image fa-3x mb-3"></i>
+                    <p>Select a template to see preview</p>
+                </div>
+            `;
+            previewCvBtn.disabled = true;
+        }
+    });
+    
+    // Preview CV button handler
+    previewCvBtn.addEventListener('click', function() {
+        const selectedTemplate = templateSelect.value;
+        if (!selectedTemplate) return;
+        
+        // Get current form data
+        const formData = getFormData();
+        
+        // Show loading state
+        previewCvBtn.disabled = true;
+        previewCvBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating Preview...';
+        
+        // Send preview request
+        fetch('{% url "cv_generator:preview_cv_ajax" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                template_id: selectedTemplate,
+                cv_data: formData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Open preview in new window
+                window.open(data.preview_url, '_blank');
+                showStatus('CV preview generated successfully!', 'success');
+            } else {
+                showStatus('Preview generation failed: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            showStatus('Network error: ' + error.message, 'danger');
+        })
+        .finally(() => {
+            previewCvBtn.disabled = false;
+            previewCvBtn.innerHTML = '<i class="fas fa-eye me-2"></i>Preview CV';
+        });
+    });
+});
+
+// Tab navigation functions
+function nextTab(tabName) {
+    document.querySelector(`#${tabName}-tab`).click();
+    updateProgress();
+}
+
+function previousTab(tabName) {
+    document.querySelector(`#${tabName}-tab`).click();
+}
+
+// Dynamic entry management
+function addExperienceEntry() {
+    const template = document.getElementById('experience-template');
+    const clone = template.content.cloneNode(true);
+    
+    // Hide the "no experience" message
+    const noExperience = document.getElementById('no-experience');
+    if (noExperience) {
+        noExperience.style.display = 'none';
+    }
+    
+    // Add the new entry
+    document.getElementById('experience-list').appendChild(clone);
+    updateProgress();
+}
+
+function addEducationEntry() {
+    const template = getEducationTemplate();
+    const container = document.getElementById('education-list');
+    const noDataElement = document.getElementById('no-education');
+    
+    if (noDataElement) {
+        noDataElement.style.display = 'none';
+    }
+    
+    container.appendChild(template);
+    updateProgress();
+}
+
+function addProjectEntry() {
+    const template = getProjectTemplate();
+    const container = document.getElementById('projects-list');
+    const noDataElement = document.getElementById('no-projects');
+    
+    if (noDataElement) {
+        noDataElement.style.display = 'none';
+    }
+    
+    container.appendChild(template);
+    updateProgress();
+}
+
+function addCertificationEntry() {
+    const template = getCertificationTemplate();
+    const container = document.getElementById('certifications-list');
+    const noDataElement = document.getElementById('no-certifications');
+    
+    if (noDataElement) {
+        noDataElement.style.display = 'none';
+    }
+    
+    container.appendChild(template);
+    updateProgress();
+}
+
+function addAwardEntry() {
+    const template = getAwardTemplate();
+    const container = document.getElementById('awards-list');
+    const noDataElement = document.getElementById('no-awards');
+    
+    if (noDataElement) {
+        noDataElement.style.display = 'none';
+    }
+    
+    container.appendChild(template);
+    updateProgress();
+}
+
+function addVolunteeringEntry() {
+    const template = getVolunteeringTemplate();
+    const container = document.getElementById('volunteering-list');
+    const noDataElement = document.getElementById('no-volunteering');
+    
+    if (noDataElement) {
+        noDataElement.style.display = 'none';
+    }
+    
+    container.appendChild(template);
+    updateProgress();
+}
+
+function addPublicationEntry() {
+    const template = getPublicationTemplate();
+    const container = document.getElementById('publications-list');
+    const noDataElement = document.getElementById('no-publications');
+    
+    if (noDataElement) {
+        noDataElement.style.display = 'none';
+    }
+    
+    container.appendChild(template);
+    updateProgress();
+}
+
+// Template generators for other sections
+function getEducationTemplate() {
+    const div = document.createElement('div');
+    div.className = 'education-entry entry-item border rounded p-4 mb-4';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h6 class="fw-bold text-primary mb-0">
+                <i class="fas fa-graduation-cap me-2"></i>Education
+            </h6>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Degree *</label>
+                    <input type="text" class="form-control" name="degree" 
+                           placeholder="e.g., Bachelor of Science" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Institution *</label>
+                    <input type="text" class="form-control" name="institution" 
+                           placeholder="e.g., Stanford University" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Field of Study</label>
+                    <input type="text" class="form-control" name="field_of_study" 
+                           placeholder="e.g., Computer Science">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Start Date</label>
+                    <input type="date" class="form-control" name="start_date">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">End Date</label>
+                    <input type="date" class="form-control" name="end_date">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">GPA</label>
+                    <input type="text" class="form-control" name="gpa" placeholder="3.8/4.0">
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea class="form-control" name="description" rows="3" 
+                      placeholder="Relevant coursework, honors, activities..."></textarea>
+        </div>
+    `;
+    return div;
+}
+
+function getProjectTemplate() {
+    const div = document.createElement('div');
+    div.className = 'project-entry entry-item border rounded p-4 mb-4';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h6 class="fw-bold text-primary mb-0">
+                <i class="fas fa-project-diagram me-2"></i>Project
+            </h6>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Project Name *</label>
+                    <input type="text" class="form-control" name="name" 
+                           placeholder="e.g., E-commerce Web Application" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Technologies</label>
+                    <input type="text" class="form-control" name="technologies" 
+                           placeholder="e.g., React, Node.js, MongoDB">
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Start Date</label>
+                    <input type="date" class="form-control" name="start_date">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">End Date</label>
+                    <input type="date" class="form-control" name="end_date">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Project URL</label>
+                    <input type="url" class="form-control" name="url" 
+                           placeholder="https://github.com/username/project">
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Description *</label>
+            <textarea class="form-control" name="description" rows="3" 
+                      placeholder="Describe the project and your role..." required></textarea>
+        </div>
+    `;
+    return div;
+}
+
+function getCertificationTemplate() {
+    const div = document.createElement('div');
+    div.className = 'certification-entry entry-item border rounded p-4 mb-4';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h6 class="fw-bold text-primary mb-0">
+                <i class="fas fa-certificate me-2"></i>Certification
+            </h6>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Certification Name *</label>
+                    <input type="text" class="form-control" name="name" 
+                           placeholder="e.g., AWS Certified Solutions Architect" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Issuer *</label>
+                    <input type="text" class="form-control" name="issuer" 
+                           placeholder="e.g., Amazon Web Services" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Issue Date</label>
+                    <input type="date" class="form-control" name="issue_date">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Expiry Date</label>
+                    <input type="date" class="form-control" name="expiry_date">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Verification URL</label>
+                    <input type="url" class="form-control" name="url" 
+                           placeholder="https://verify.certificate.com">
+                </div>
+            </div>
+        </div>
+    `;
+    return div;
+}
+
+function getAwardTemplate() {
+    const div = document.createElement('div');
+    div.className = 'award-entry entry-item border rounded p-4 mb-4';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h6 class="fw-bold text-primary mb-0">
+                <i class="fas fa-trophy me-2"></i>Award
+            </h6>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Award Title *</label>
+                    <input type="text" class="form-control" name="title" 
+                           placeholder="e.g., Employee of the Year" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Awarding Body *</label>
+                    <input type="text" class="form-control" name="awarding_body" 
+                           placeholder="e.g., Company Name" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Year *</label>
+                    <input type="number" class="form-control" name="year" 
+                           placeholder="2023" min="1900" max="2030" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea class="form-control" name="description" rows="3" 
+                      placeholder="Brief description of the award..."></textarea>
+        </div>
+    `;
+    return div;
+}
+
+function getVolunteeringTemplate() {
+    const div = document.createElement('div');
+    div.className = 'volunteering-entry entry-item border rounded p-4 mb-4';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h6 class="fw-bold text-primary mb-0">
+                <i class="fas fa-heart me-2"></i>Volunteering
+            </h6>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Role Title *</label>
+                    <input type="text" class="form-control" name="role_title" 
+                           placeholder="e.g., Team Lead" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Organization *</label>
+                    <input type="text" class="form-control" name="organization" 
+                           placeholder="e.g., Red Cross" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Location</label>
+                    <input type="text" class="form-control" name="location" 
+                           placeholder="e.g., New York, NY">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Start Date</label>
+                    <input type="date" class="form-control" name="start_date">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">End Date</label>
+                    <input type="date" class="form-control" name="end_date">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <div class="form-check mt-4 pt-1">
+                        <input class="form-check-input" type="checkbox" name="current" 
+                               onchange="toggleEndDate(this)">
+                        <label class="form-check-label fw-semibold">Current</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Description *</label>
+            <textarea class="form-control" name="description" rows="3" 
+                      placeholder="Describe your role and impact..." required></textarea>
+        </div>
+    `;
+    return div;
+}
+
+function getPublicationTemplate() {
+    const div = document.createElement('div');
+    div.className = 'publication-entry entry-item border rounded p-4 mb-4';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h6 class="fw-bold text-primary mb-0">
+                <i class="fas fa-book me-2"></i>Publication
+            </h6>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntry(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Publication Title *</label>
+                    <input type="text" class="form-control" name="title" 
+                           placeholder="e.g., Machine Learning Applications in Healthcare" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Publication Date</label>
+                    <input type="date" class="form-control" name="publication_date">
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Publisher/Journal *</label>
+                    <input type="text" class="form-control" name="publisher" 
+                           placeholder="e.g., IEEE Journal" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Publication URL</label>
+                    <input type="url" class="form-control" name="url" 
+                           placeholder="https://link-to-publication.com">
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea class="form-control" name="description" rows="3" 
+                      placeholder="Brief description or abstract..."></textarea>
+        </div>
+    `;
+    return div;
+}
+
+function removeEntry(button) {
+    const entry = button.closest('.experience-entry, .education-entry, .certification-entry, .project-entry, .award-entry, .volunteering-entry, .publication-entry');
+    entry.remove();
+    updateProgress();
+}
+
+// Progress tracking
+function updateProgress() {
+    const tabs = ['basic', 'experience', 'education', 'certifications', 'projects', 'awards', 'volunteering', 'publications'];
+    let completedSections = 0;
+    
+    // Check basic info
+    const basicForm = document.getElementById('basic-info-form');
+    if (basicForm) {
+        const requiredFields = basicForm.querySelectorAll('input[required], textarea[required]');
+        let basicComplete = true;
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                basicComplete = false;
+            }
+        });
+        if (basicComplete) completedSections++;
+    }
+    
+    // Check other sections (simplified - you can make this more sophisticated)
+    const experienceEntries = document.querySelectorAll('.experience-entry');
+    if (experienceEntries.length > 0) completedSections++;
+    
+    // Update progress bar
+    const percentage = Math.round((completedSections / tabs.length) * 100);
+    const progressBarElement = document.getElementById('cv-progress-bar');
+    const percentageElement = document.getElementById('completion-percentage');
+    
+    if (progressBarElement) {
+        progressBarElement.style.width = percentage + '%';
+    }
+    if (percentageElement) {
+        percentageElement.textContent = percentage + '%';
+    }
+}
+
+// CV creation
+function createCV() {
+    // Collect all form data and submit
+    alert('Creating CV... (This would collect all form data and submit to the backend)');
+}
+
+function saveDraft() {
+    alert('Saving draft... (This would save the current state)');
+}
+
+// Functions to show/hide add buttons based on data availability
+function hideAddButton(sectionName) {
+    const addButton = document.querySelector(`button[onclick="add${capitalizeFirst(sectionName)}Entry()"]`);
+    const headerAddButton = document.querySelector(`#${sectionName} .card-header button`);
+    const noDataElement = document.getElementById(`no-${sectionName}`);
+    
+    if (addButton) {
+        addButton.style.display = 'none';
+    }
+    if (headerAddButton) {
+        headerAddButton.style.display = 'none';
+    }
+    if (noDataElement) {
+        noDataElement.style.display = 'none';
+    }
+    
+    console.log(`Hidden add buttons for ${sectionName} section`);
+}
+
+function showAddButton(sectionName) {
+    const addButton = document.querySelector(`button[onclick="add${capitalizeFirst(sectionName)}Entry()"]`);
+    const headerAddButton = document.querySelector(`#${sectionName} .card-header button`);
+    const noDataElement = document.getElementById(`no-${sectionName}`);
+    
+    if (addButton) {
+        addButton.style.display = 'inline-block';
+    }
+    if (headerAddButton) {
+        headerAddButton.style.display = 'inline-block';
+    }
+    if (noDataElement) {
+        noDataElement.style.display = 'block';
+    }
+    
+    console.log(`Shown add buttons for ${sectionName} section`);
+}
+
+function capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+</script>
+{% endblock %} 

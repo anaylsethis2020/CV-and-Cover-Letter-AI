@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscription Management - CV AI Builder{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-cog me-2"></i>Subscription Management
+        </h1>
+    </div>
+</div>
+
+{% if subscription %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-crown me-2"></i>Current Subscription
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="text-primary">{{ subscription.subscription_type|title }} Plan</h4>
+                        <p class="text-muted mb-3">
+                            {% if subscription.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </p>
+                        
+                        <ul class="list-unstyled">
+                            <li><strong>Start Date:</strong> {{ subscription.start_date|date:"F d, Y" }}</li>
+                            {% if subscription.end_date %}
+                                <li><strong>End Date:</strong> {{ subscription.end_date|date:"F d, Y" }}</li>
+                            {% endif %}
+                            {% if subscription.stripe_subscription_id %}
+                                <li><strong>Subscription ID:</strong> {{ subscription.stripe_subscription_id }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Plan Features</h5>
+                        {% if subscription.subscription_type == 'free' %}
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Basic CV builder</li>
+                                <li><i class="fas fa-check text-success me-2"></i>3 CV templates</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Basic cover letter generator</li>
+                                <li><i class="fas fa-check text-success me-2"></i>PDF export (limited)</li>
+                            </ul>
+                        {% elif subscription.subscription_type == 'premium' %}
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Advanced CV builder</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Unlimited CV templates</li>
+                                <li><i class="fas fa-check text-success me-2"></i>AI-powered cover letter generator</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Unlimited PDF exports</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                            </ul>
+                        {% elif subscription.subscription_type == 'enterprise' %}
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Everything in Premium</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Team collaboration</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Advanced analytics</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Custom branding</li>
+                                <li><i class="fas fa-check text-success me-2"></i>API access</li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'cv_generator:dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    
+                    <div>
+                        <a href="{% url 'payments:subscription_plans' %}" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-arrow-up me-2"></i>Upgrade Plan
+                        </a>
+                        
+                        {% if subscription.subscription_type != 'free' and subscription.is_active %}
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                <i class="fas fa-times me-2"></i>Cancel Subscription
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Billing Information
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if subscription.subscription_type == 'free' %}
+                    <p class="text-muted">No billing information for free plan.</p>
+                {% else %}
+                    <p><strong>Billing Cycle:</strong> Monthly</p>
+                    <p><strong>Next Billing:</strong> 
+                        {% if subscription.end_date %}
+                            {{ subscription.end_date|date:"F d, Y" }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                    <p><strong>Status:</strong> 
+                        {% if subscription.is_active %}
+                            <span class="text-success">Active</span>
+                        {% else %}
+                            <span class="text-danger">Cancelled</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card shadow mt-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-question-circle me-2"></i>Need Help?
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="small">If you have questions about your subscription or need support, please contact us.</p>
+                <button class="btn btn-sm btn-outline-primary w-100">
+                    <i class="fas fa-envelope me-2"></i>Contact Support
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Subscription Modal -->
+{% if subscription.subscription_type != 'free' and subscription.is_active %}
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancel Subscription</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel your subscription? This action cannot be undone.</p>
+                <p class="text-muted">Your subscription will remain active until {{ subscription.end_date|date:"F d, Y" }}.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Subscription</button>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="cancel">
+                    <button type="submit" class="btn btn-danger">Cancel Subscription</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                <h3>No Active Subscription</h3>
+                <p class="text-muted mb-4">You don't have an active subscription yet.</p>
+                <a href="{% url 'payments:subscription_plans' %}" class="btn btn-primary">
+                    <i class="fas fa-crown me-2"></i>View Subscription Plans
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %} 

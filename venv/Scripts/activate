@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\viewa\OneDrive\vscode-projects\CV-and-Cover-Letter-AI\venv"
+VIRTUAL_ENV="C:\Users\viewa\OneDrive\vscode-projects\cv-ai-builder-final\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

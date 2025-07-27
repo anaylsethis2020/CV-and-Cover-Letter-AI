@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Subscription Plans - CV AI Builder{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="fas fa-crown me-2"></i>Choose Your Plan
+        </h1>
+        <p class="lead text-center mb-5">Unlock the full potential of CV AI Builder with our premium features.</p>
+    </div>
+</div>
+
+<div class="row g-4 justify-content-center">
+    {% for plan in plans %}
+        <div class="col-md-4">
+            <div class="card h-100 {% if plan.name == 'Premium' %}border-primary shadow-lg{% else %}shadow{% endif %}">
+                {% if plan.name == 'Premium' %}
+                    <div class="badge bg-primary position-absolute top-0 start-50 translate-middle">
+                        Most Popular
+                    </div>
+                {% endif %}
+                
+                <div class="card-body text-center">
+                    <h3 class="card-title">{{ plan.name }}</h3>
+                    <div class="display-4 fw-bold text-primary mb-3">
+                        {% if plan.price == 0 %}
+                            Free
+                        {% else %}
+                            ${{ plan.price }}
+                            <small class="fs-6 text-muted">/month</small>
+                        {% endif %}
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4">
+                        {% for feature in plan.features %}
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>{{ feature }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    
+                    {% if user_subscription and user_subscription.subscription_type == plan.name|lower %}
+                        <button class="btn btn-outline-success btn-lg w-100" disabled>
+                            <i class="fas fa-check me-2"></i>Current Plan
+                        </button>
+                    {% elif plan.name == 'Free' %}
+                        <a href="{% url 'users:register' %}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                    {% else %}
+                        <button class="btn btn-primary btn-lg w-100" 
+                                data-stripe-price="{{ plan.stripe_price_id }}" 
+                                data-subscription-type="{{ plan.name|lower }}"
+                                data-original-text="Choose {{ plan.name }}">
+                            <i class="fas fa-credit-card me-2"></i>Choose {{ plan.name }}
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if user_subscription %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-user me-2"></i>Your Current Subscription
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-1">{{ user_subscription.subscription_type|title }} Plan</h5>
+                        <p class="text-muted mb-0">
+                            {% if user_subscription.end_date %}
+                                {% if user_subscription.is_active %}
+                                    Active until {{ user_subscription.end_date|date:"F d, Y" }}
+                                {% else %}
+                                    Expired on {{ user_subscription.end_date|date:"F d, Y" }}
+                                {% endif %}
+                            {% else %}
+                                No expiration date
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{% url 'payments:subscription_management' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-cog me-1"></i>Manage Subscription
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="text-center">
+            <h3 class="mb-4">Frequently Asked Questions</h3>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Can I change my plan later?</h5>
+                            <p class="card-text">Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Is my data secure?</h5>
+                            <p class="card-text">Absolutely. We use industry-standard encryption and security practices to protect your personal information and CV data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Stripe with publishable key
+    const stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
+    
+    // Get all subscription buttons
+    const subscriptionButtons = document.querySelectorAll('[data-stripe-price]');
+    
+    subscriptionButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const priceId = this.dataset.stripePrice;
+            const subscriptionType = this.dataset.subscriptionType;
+            const originalText = this.dataset.originalText;
+            
+            // Update button state
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            
+            try {
+                // Create checkout session
+                const response = await fetch('{% url "payments:create_checkout_session" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: new URLSearchParams({
+                        'price_id': priceId,
+                        'subscription_type': subscriptionType
+                    })
+                });
+                
+                const session = await response.json();
+                
+                if (session.error) {
+                    throw new Error(session.error);
+                }
+                
+                // Redirect to Stripe Checkout
+                const result = await stripe.redirectToCheckout({
+                    sessionId: session.session_id
+                });
+                
+                if (result.error) {
+                    throw new Error(result.error.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Payment failed: ' + error.message);
+                
+                // Reset button state
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-credit-card me-2"></i>' + originalText;
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

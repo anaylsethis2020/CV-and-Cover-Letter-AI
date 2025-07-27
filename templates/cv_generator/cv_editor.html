@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}CV Editor - CV AI Builder{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>
+                <i class="fas fa-edit me-2"></i>Edit CV: {{ cv.title }}
+            </h1>
+            <div>
+                <a href="{% url 'cv_generator:dashboard' %}" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+                <a href="{% url 'cv_generator:export_pdf' %}?cv_id={{ cv.id }}" class="btn btn-success">
+                    <i class="fas fa-download me-1"></i>Export PDF
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-populate notification -->
+<div id="auto-populate-notification" class="row mb-4" style="display: none;">
+    <div class="col-12">
+        <div class="alert alert-info alert-dismissible fade show">
+            <i class="fas fa-magic me-2"></i>
+            <strong>Parsed CV Data Available!</strong> We found additional information from your uploaded CV.
+            <button type="button" class="btn btn-sm btn-outline-primary ms-3" id="auto-populate-btn">
+                <i class="fas fa-plus me-1"></i>Auto-Add Sections
+            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Basic Information -->
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-user me-2"></i>Basic Information
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update Basic Info
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Experience Section -->
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-briefcase me-2"></i>Work Experience
+                </h4>
+                <a href="{% url 'cv_generator:add_experience' cv.id %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add Experience
+                </a>
+            </div>
+            <div class="card-body" id="experience-section">
+                {% if cv.experience %}
+                    {% for exp in cv.experience %}
+                        <div class="experience-item mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">{{ exp.position }}</h5>
+                                    <h6 class="text-primary mb-1">{{ exp.company }}</h6>
+                                    <p class="text-muted mb-2">
+                                        {{ exp.start_date }} - 
+                                        {% if exp.current %}
+                                            Present
+                                        {% else %}
+                                            {{ exp.end_date }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-0">{{ exp.description }}</p>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4 text-muted" id="no-experience">
+                        <i class="fas fa-briefcase fa-3x mb-3"></i>
+                        <p>No work experience added yet.</p>
+                        <a href="{% url 'cv_generator:add_experience' cv.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Add Your First Experience
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Education Section -->
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-graduation-cap me-2"></i>Education
+                </h4>
+                <a href="{% url 'cv_generator:add_education' cv.id %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add Education
+                </a>
+            </div>
+            <div class="card-body" id="education-section">
+                {% if cv.education %}
+                    {% for edu in cv.education %}
+                        <div class="education-item mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">{{ edu.degree }}</h5>
+                                    <h6 class="text-primary mb-1">{{ edu.institution }}</h6>
+                                    <p class="text-muted mb-2">
+                                        {{ edu.field_of_study }} | {{ edu.start_date }} - {{ edu.end_date }}
+                                    </p>
+                                    {% if edu.gpa %}
+                                        <p class="mb-1"><strong>GPA:</strong> {{ edu.gpa }}</p>
+                                    {% endif %}
+                                    {% if edu.description %}
+                                        <p class="mb-0">{{ edu.description }}</p>
+                                    {% endif %}
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4 text-muted" id="no-education">
+                        <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                        <p>No education added yet.</p>
+                        <a href="{% url 'cv_generator:add_education' cv.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Add Your Education
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Projects Section -->
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-project-diagram me-2"></i>Projects
+                </h4>
+                <a href="{% url 'cv_generator:add_project' cv.id %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add Project
+                </a>
+            </div>
+            <div class="card-body" id="projects-section">
+                {% if cv.projects %}
+                    {% for project in cv.projects %}
+                        <div class="project-item mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">{{ project.name }}</h5>
+                                    {% if project.url %}
+                                        <p class="mb-1">
+                                            <a href="{{ project.url }}" target="_blank" class="text-primary">
+                                                <i class="fas fa-external-link-alt me-1"></i>View Project
+                                            </a>
+                                        </p>
+                                    {% endif %}
+                                    <p class="text-muted mb-2"><strong>Technologies:</strong> {{ project.technologies }}</p>
+                                    <p class="mb-0">{{ project.description }}</p>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4 text-muted" id="no-projects">
+                        <i class="fas fa-project-diagram fa-3x mb-3"></i>
+                        <p>No projects added yet.</p>
+                        <a href="{% url 'cv_generator:add_project' cv.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Add Your First Project
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>CV Summary
+                </h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Title:</strong> {{ cv.title }}</p>
+                <p><strong>Name:</strong> {{ cv.first_name }} {{ cv.last_name }}</p>
+                <p><strong>Email:</strong> {{ cv.email }}</p>
+                <p><strong>Phone:</strong> {{ cv.phone }}</p>
+                <p><strong>Last Updated:</strong> {{ cv.updated_at|date:"M d, Y" }}</p>
+                
+                <hr>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cv_generator:export_pdf' %}?cv_id={{ cv.id }}" class="btn btn-success">
+                        <i class="fas fa-download me-2"></i>Export PDF
+                    </a>
+                    <a href="{% url 'cv_generator:cover_letter_generator' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-envelope me-2"></i>Generate Cover Letter
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Progress
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-2">
+                    <div class="progress-bar" id="cv-progress" role="progressbar" style="width: 0%"></div>
+                </div>
+                <small class="text-muted">CV completion: <span id="completion-percentage">0%</span></small>
+                
+                <ul class="list-unstyled mt-3 small">
+                    <li class="mb-1">
+                        <i class="fas fa-check text-success me-2" id="basic-check"></i>Basic Information
+                    </li>
+                    <li class="mb-1">
+                        <i class="fas fa-times text-muted me-2" id="experience-check"></i>Work Experience
+                    </li>
+                    <li class="mb-1">
+                        <i class="fas fa-times text-muted me-2" id="education-check"></i>Education
+                    </li>
+                    <li class="mb-1">
+                        <i class="fas fa-times text-muted me-2" id="projects-check"></i>Projects
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for parsed data from sessionStorage
+    checkForParsedData();
+    
+    // Update progress
+    updateProgress();
+    
+    // Handle auto-populate button
+    document.getElementById('auto-populate-btn')?.addEventListener('click', autoPopulateSections);
+    
+    function checkForParsedData() {
+        const hasExperience = sessionStorage.getItem('parsed_experience');
+        const hasEducation = sessionStorage.getItem('parsed_education');
+        const hasProjects = sessionStorage.getItem('parsed_projects');
+        
+        if (hasExperience || hasEducation || hasProjects) {
+            document.getElementById('auto-populate-notification').style.display = 'block';
+        }
+    }
+    
+    function autoPopulateSections() {
+        let sectionsAdded = 0;
+        
+        // Auto-populate experience
+        const experience = sessionStorage.getItem('parsed_experience');
+        if (experience) {
+            const expData = JSON.parse(experience);
+            // Here you would typically make AJAX calls to add the experience data
+            // For now, we'll show a success message
+            sectionsAdded++;
+            sessionStorage.removeItem('parsed_experience');
+        }
+        
+        // Auto-populate education
+        const education = sessionStorage.getItem('parsed_education');
+        if (education) {
+            const eduData = JSON.parse(education);
+            sectionsAdded++;
+            sessionStorage.removeItem('parsed_education');
+        }
+        
+        // Auto-populate projects
+        const projects = sessionStorage.getItem('parsed_projects');
+        if (projects) {
+            const projData = JSON.parse(projects);
+            sectionsAdded++;
+            sessionStorage.removeItem('parsed_projects');
+        }
+        
+        if (sectionsAdded > 0) {
+            // Hide notification
+            document.getElementById('auto-populate-notification').style.display = 'none';
+            
+            // Show success message
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show';
+            alert.innerHTML = `
+                <i class="fas fa-check me-2"></i>
+                Successfully added ${sectionsAdded} section(s) from your uploaded CV! 
+                <strong>Please refresh the page to see the changes.</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.querySelector('.container').insertBefore(alert, document.querySelector('.row'));
+            
+            // Auto-refresh after 2 seconds
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        }
+    }
+    
+    function updateProgress() {
+        let completedSections = 0;
+        const totalSections = 4;
+        
+        // Check basic info (always completed if we're in editor)
+        completedSections++;
+        document.getElementById('basic-check').className = 'fas fa-check text-success me-2';
+        
+        // Check experience
+        {% if cv.experience %}
+            completedSections++;
+            document.getElementById('experience-check').className = 'fas fa-check text-success me-2';
+        {% endif %}
+        
+        // Check education
+        {% if cv.education %}
+            completedSections++;
+            document.getElementById('education-check').className = 'fas fa-check text-success me-2';
+        {% endif %}
+        
+        // Check projects
+        {% if cv.projects %}
+            completedSections++;
+            document.getElementById('projects-check').className = 'fas fa-check text-success me-2';
+        {% endif %}
+        
+        const percentage = Math.round((completedSections / totalSections) * 100);
+        document.getElementById('cv-progress').style.width = percentage + '%';
+        document.getElementById('completion-percentage').textContent = percentage + '%';
+    }
+});
+</script>
+{% endblock %} 

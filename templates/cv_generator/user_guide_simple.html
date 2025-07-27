@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}User Guide - CV AI Builder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>CV AI Builder - User Guide</h1>
+    <p>Welcome to the CV AI Builder user guide!</p>
+    
+    <div class="row">
+        <div class="col-12">
+            <h2>Getting Started</h2>
+            <p>This is a comprehensive guide to using the CV AI Builder application.</p>
+            
+            <h3>Features</h3>
+            <ul>
+                <li>AI-powered CV parsing</li>
+                <li>Job description analysis</li>
+                <li>Multiple professional templates</li>
+                <li>Export to PDF</li>
+            </ul>
+            
+            <h3>Quick Links</h3>
+            <p><a href="{% url 'cv_generator:cv_builder_comprehensive' %}" class="btn btn-primary">Start Building Your CV</a></p>
+            <p><a href="{% url 'cv_generator:dashboard' %}" class="btn btn-secondary">Go to Dashboard</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

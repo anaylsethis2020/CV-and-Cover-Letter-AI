@@ -1,0 +1,1065 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Guide - CV AI Builder{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-purple {
+    background-color: #6f42c1;
+}
+
+.sticky-nav {
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.guide-step {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background: #f8f9fa;
+    border-left: 4px solid #007bff;
+    border-radius: 0.25rem;
+}
+
+.guide-step h6 {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+}
+
+.screenshot-placeholder {
+    background: #e9ecef;
+    border: 2px dashed #adb5bd;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    margin: 1rem 0;
+    color: #6c757d;
+}
+
+.tip-box {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.warning-box {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: #212529;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.step-number {
+    background: #007bff;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.nav-section {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nav-section:last-child {
+    border-bottom: none;
+}
+
+.subsection-link {
+    font-size: 0.9rem;
+    color: #6c757d;
+    padding-left: 1rem;
+}
+
+.subsection-link:hover {
+    color: #007bff;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .sticky-nav {
+        position: static;
+        max-height: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-3">
+            <div class="card sticky-nav">
+                <div class="card-header hero-gradient text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book-open me-2"></i>User Guide Navigation
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="nav-section">
+                            <a href="#getting-started" class="list-group-item list-group-item-action">
+                                <i class="fas fa-play-circle me-2"></i>Getting Started
+                            </a>
+                            <a href="#account-setup" class="subsection-link d-block py-1">Account Setup</a>
+                            <a href="#dashboard-overview" class="subsection-link d-block py-1">Dashboard Overview</a>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <a href="#building-cv" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-alt me-2"></i>Building Your CV
+                            </a>
+                            <a href="#upload-method" class="subsection-link d-block py-1">Upload Method</a>
+                            <a href="#manual-method" class="subsection-link d-block py-1">Manual Entry</a>
+                            <a href="#sections-guide" class="subsection-link d-block py-1">CV Sections</a>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <a href="#ai-features" class="list-group-item list-group-item-action">
+                                <i class="fas fa-robot me-2"></i>AI Features
+                            </a>
+                            <a href="#cv-parsing" class="subsection-link d-block py-1">CV Parsing</a>
+                            <a href="#job-analysis" class="subsection-link d-block py-1">Job Analysis</a>
+                            <a href="#optimization" class="subsection-link d-block py-1">Optimization</a>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <a href="#templates" class="list-group-item list-group-item-action">
+                                <i class="fas fa-palette me-2"></i>Templates & Design
+                            </a>
+                            <a href="#template-selection" class="subsection-link d-block py-1">Selection Guide</a>
+                            <a href="#customization" class="subsection-link d-block py-1">Customization</a>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <a href="#export-download" class="list-group-item list-group-item-action">
+                                <i class="fas fa-download me-2"></i>Export & Download
+                            </a>
+                            <a href="#pdf-export" class="subsection-link d-block py-1">PDF Export</a>
+                            <a href="#version-management" class="subsection-link d-block py-1">Version Management</a>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <a href="#advanced-features" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cogs me-2"></i>Advanced Features
+                            </a>
+                            <a href="#cover-letters" class="subsection-link d-block py-1">Cover Letters</a>
+                            <a href="#premium-features" class="subsection-link d-block py-1">Premium Features</a>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <a href="#troubleshooting" class="list-group-item list-group-item-action">
+                                <i class="fas fa-tools me-2"></i>Troubleshooting
+                            </a>
+                            <a href="#common-issues" class="subsection-link d-block py-1">Common Issues</a>
+                            <a href="#support" class="subsection-link d-block py-1">Get Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Hero Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="hero-gradient text-white p-5 rounded">
+                        <h1 class="display-4 fw-bold">CV AI Builder - Complete User Guide</h1>
+                        <p class="lead">Master every feature and create outstanding CVs with AI-powered tools</p>
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-clock fa-2x mb-2"></i>
+                                    <h6>Quick Start: 5 minutes</h6>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-graduation-cap fa-2x mb-2"></i>
+                                    <h6>Complete Guide: 15 minutes</h6>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-star fa-2x mb-2"></i>
+                                    <h6>Professional Results</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Getting Started -->
+            <section id="getting-started" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h2 class="mb-0">
+                            <i class="fas fa-play-circle me-2"></i>Getting Started
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="account-setup">Account Setup</h3>
+                        
+                        <div class="guide-step">
+                            <h6><span class="step-number">1</span>Create Your Account</h6>
+                            <p>Visit the registration page and provide your email address and a secure password. You'll receive a confirmation email to verify your account.</p>
+                            <div class="tip-box">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                <strong>Tip:</strong> Use a professional email address as it may be used for CV generation.
+                            </div>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">2</span>Complete Your Profile</h6>
+                            <p>After logging in, visit your profile page to add:</p>
+                            <ul>
+                                <li>Personal information (name, contact details)</li>
+                                <li>Professional summary</li>
+                                <li>Industry preferences</li>
+                                <li>Career goals</li>
+                            </ul>
+                        </div>
+
+                        <h3 id="dashboard-overview" class="mt-4">Dashboard Overview</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-tachometer-alt me-2"></i>Dashboard Features</h5>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success me-2"></i>View all your CVs</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Track application status</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Quick access to tools</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Usage statistics</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="screenshot-placeholder">
+                                    <i class="fas fa-image fa-3x mb-3"></i>
+                                    <p>Dashboard Screenshot<br><small>Your personalized workspace</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Building Your CV -->
+            <section id="building-cv" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">
+                            <i class="fas fa-file-alt me-2"></i>Building Your CV
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Two Methods Available:</strong> You can either upload an existing CV for AI processing or start from scratch with manual entry.
+                        </div>
+
+                        <h3 id="upload-method">Method 1: Upload & AI Processing</h3>
+                        
+                        <div class="guide-step">
+                            <h6><span class="step-number">1</span>Access CV Builder Pro</h6>
+                            <p>Click on "CV Builder Pro" from the main navigation or dashboard. This is our advanced CV builder with AI capabilities.</p>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">2</span>Upload Your CV</h6>
+                            <p>In the "Upload & Parse Your CV" section:</p>
+                            <ul>
+                                <li>Click "Choose File" and select your CV</li>
+                                <li>Supported formats: PDF, DOCX, DOC, TXT</li>
+                                <li>Maximum file size: 10MB</li>
+                                <li>Click "Parse CV & Auto-Fill"</li>
+                            </ul>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6>Supported Formats</h6>
+                                    <div class="row text-center">
+                                        <div class="col-3">
+                                            <i class="fas fa-file-pdf fa-2x text-danger mb-1"></i>
+                                            <small class="d-block">PDF</small>
+                                        </div>
+                                        <div class="col-3">
+                                            <i class="fas fa-file-word fa-2x text-primary mb-1"></i>
+                                            <small class="d-block">DOCX</small>
+                                        </div>
+                                        <div class="col-3">
+                                            <i class="fas fa-file-alt fa-2x text-secondary mb-1"></i>
+                                            <small class="d-block">DOC</small>
+                                        </div>
+                                        <div class="col-3">
+                                            <i class="fas fa-file-text fa-2x text-success mb-1"></i>
+                                            <small class="d-block">TXT</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="warning-box">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Important:</strong> Ensure your CV has clear structure and readable text. Avoid complex layouts or text in images.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">3</span>Review AI Extraction</h6>
+                            <p>After processing, the AI will automatically populate all CV sections. Review each section and make adjustments as needed:</p>
+                            <ul>
+                                <li>Personal information and contact details</li>
+                                <li>Professional summary</li>
+                                <li>Work experience with dates and descriptions</li>
+                                <li>Education and qualifications</li>
+                                <li>Skills and competencies</li>
+                                <li>Additional sections (projects, certifications, etc.)</li>
+                            </ul>
+                        </div>
+
+                        <h3 id="manual-method" class="mt-4">Method 2: Manual Entry</h3>
+                        
+                        <div class="guide-step">
+                            <h6><span class="step-number">1</span>Start Fresh</h6>
+                            <p>If you prefer to build your CV from scratch or don't have an existing CV, skip the upload section and scroll down to the CV sections.</p>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">2</span>Fill Each Section</h6>
+                            <p>Complete each section systematically. Use the "Add" buttons to create multiple entries for experience, education, etc.</p>
+                        </div>
+
+                        <h3 id="sections-guide" class="mt-4">CV Sections Guide</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-user me-2"></i>Personal Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            <li>• Full name and professional title</li>
+                                            <li>• Phone number and email</li>
+                                            <li>• Address (city/country is sufficient)</li>
+                                            <li>• LinkedIn and portfolio URLs</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-quote-left me-2"></i>Professional Summary</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            <li>• 2-3 sentences describing your expertise</li>
+                                            <li>• Key achievements and skills</li>
+                                            <li>• Career goals and aspirations</li>
+                                            <li>• Industry-specific keywords</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-briefcase me-2"></i>Work Experience</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            <li>• Job title and company name</li>
+                                            <li>• Employment dates (start and end)</li>
+                                            <li>• Key responsibilities and achievements</li>
+                                            <li>• Quantify results where possible</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Education</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            <li>• Degree/qualification title</li>
+                                            <li>• Institution name and location</li>
+                                            <li>• Graduation date or expected date</li>
+                                            <li>• Relevant coursework or achievements</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tip-box">
+                            <i class="fas fa-magic me-2"></i>
+                            <strong>Pro Tip:</strong> After filling out basic information, use the "Reset & Add Manually" button if you want to switch from auto-filled to manual entry.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Features -->
+            <section id="ai-features" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-purple text-white">
+                        <h2 class="mb-0">
+                            <i class="fas fa-robot me-2"></i>AI-Powered Features
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="cv-parsing">Intelligent CV Parsing</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="guide-step">
+                                    <h6>How AI Parsing Works</h6>
+                                    <p>Our advanced AI analyzes your uploaded CV and extracts information using natural language processing:</p>
+                                    <ol>
+                                        <li><strong>Text Extraction:</strong> Converts your CV to readable text</li>
+                                        <li><strong>Section Recognition:</strong> Identifies different CV sections</li>
+                                        <li><strong>Data Categorization:</strong> Sorts information into appropriate fields</li>
+                                        <li><strong>Intelligent Formatting:</strong> Cleans and structures the data</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="text-center">
+                                    <h6>AI Accuracy</h6>
+                                    <p class="small">95%+ accuracy on well-formatted CVs</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 id="job-analysis" class="mt-4">Job Description Analysis</h3>
+                        
+                        <div class="guide-step">
+                            <h6><span class="step-number">1</span>Input Job Details</h6>
+                            <p>In the "Job Description Analysis" section, provide:</p>
+                            <ul>
+                                <li><strong>Job Description:</strong> Copy and paste the full job posting</li>
+                                <li><strong>Job Title:</strong> The specific position you're applying for</li>
+                                <li><strong>Company Name:</strong> The organization's name</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">2</span>Click "Analyze & Optimize"</h6>
+                            <p>The AI will analyze the job requirements against your CV and provide detailed insights.</p>
+                        </div>
+
+                        <h3 id="optimization" class="mt-4">AI Optimization Results</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card border-success h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-success">
+                                            <i class="fas fa-percentage"></i>
+                                        </div>
+                                        <h6>Keyword Match Score</h6>
+                                        <p class="small">Shows how well your CV aligns with job requirements</p>
+                                        <div class="badge bg-success">Example: 78%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-warning h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-warning">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </div>
+                                        <h6>Missing Skills</h6>
+                                        <p class="small">Skills mentioned in the job but missing from your CV</p>
+                                        <div class="badge bg-warning">Python, AWS</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-info h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-info">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <h6>Recommendations</h6>
+                                        <p class="small">Specific actions to improve your CV</p>
+                                        <div class="badge bg-info">4 suggestions</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="warning-box mt-3">
+                            <i class="fas fa-clock me-2"></i>
+                            <strong>Processing Time:</strong> AI analysis typically takes 5-15 seconds. For complex job descriptions, it may take up to 30 seconds.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Templates & Design -->
+            <section id="templates" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h2 class="mb-0">
+                            <i class="fas fa-palette me-2"></i>Templates & Design
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="template-selection">Template Selection Guide</h3>
+                        
+                        <div class="guide-step">
+                            <h6><span class="step-number">1</span>Choose Your Template</h6>
+                            <p>In the "Choose CV Template" section, select from our professional templates:</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-primary h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-primary">
+                                            <i class="fas fa-laptop-code"></i>
+                                        </div>
+                                        <h6>Modern Professional</h6>
+                                        <p class="small">Clean, contemporary design perfect for tech, startups, and creative industries</p>
+                                        <span class="badge bg-success">FREE</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-secondary h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-secondary">
+                                            <i class="fas fa-university"></i>
+                                        </div>
+                                        <h6>Classic Traditional</h6>
+                                        <p class="small">Formal, conservative style ideal for law, finance, and government positions</p>
+                                        <span class="badge bg-success">FREE</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-warning h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-warning">
+                                            <i class="fas fa-robot"></i>
+                                        </div>
+                                        <h6>ATS Optimized</h6>
+                                        <p class="small">Specifically designed to pass Applicant Tracking Systems with clean formatting</p>
+                                        <span class="badge bg-warning">PREMIUM</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-danger h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-danger">
+                                            <i class="fas fa-paint-brush"></i>
+                                        </div>
+                                        <h6>Creative Portfolio</h6>
+                                        <p class="small">Visual elements and modern styling for designers, marketers, and creative professionals</p>
+                                        <span class="badge bg-warning">PREMIUM</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-dark h-100">
+                                    <div class="card-body text-center">
+                                        <div class="feature-icon bg-dark">
+                                            <i class="fas fa-minimize"></i>
+                                        </div>
+                                        <h6>Minimal Clean</h6>
+                                        <p class="small">Simple, elegant design that focuses on content over decoration</p>
+                                        <span class="badge bg-warning">PREMIUM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">2</span>Preview Your CV</h6>
+                            <p>Click "Preview CV" to see how your CV looks with the selected template. The preview opens in a new window where you can:</p>
+                            <ul>
+                                <li>See the full CV layout and formatting</li>
+                                <li>Check if all information is properly displayed</li>
+                                <li>Print or save the preview</li>
+                                <li>Return to make adjustments if needed</li>
+                            </ul>
+                        </div>
+
+                        <h3 id="customization" class="mt-4">Template Customization</h3>
+                        
+                        <div class="tip-box">
+                            <i class="fas fa-palette me-2"></i>
+                            <strong>Premium Feature:</strong> Premium users can customize color schemes, fonts, and layout options for each template.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Export & Download -->
+            <section id="export-download" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h2 class="mb-0">
+                            <i class="fas fa-download me-2"></i>Export & Download
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="pdf-export">PDF Export Process</h3>
+                        
+                        <div class="guide-step">
+                            <h6><span class="step-number">1</span>Review Your CV</h6>
+                            <p>Before exporting, ensure all sections are complete and accurate. Use the template preview to verify formatting.</p>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">2</span>Choose Export Options</h6>
+                            <p>Select your preferred template and click "Export PDF" or "Download CV". The system will generate a high-quality PDF file.</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-file-pdf me-2 text-danger"></i>PDF Features</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success me-2"></i>Print-ready quality</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>ATS-compatible formatting</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Professional fonts</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Optimized file size</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="warning-box">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>File Size:</strong> Generated PDFs are typically 200-500KB, perfect for email attachments and online applications.
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 id="version-management" class="mt-4">Version Management</h3>
+                        
+                        <div class="guide-step">
+                            <h6>Save Multiple Versions</h6>
+                            <p>Create different versions of your CV for different job applications:</p>
+                            <ul>
+                                <li><strong>Software Engineer CV</strong> - Emphasizing technical skills</li>
+                                <li><strong>Project Manager CV</strong> - Highlighting leadership experience</li>
+                                <li><strong>Consultant CV</strong> - Focusing on problem-solving abilities</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-box">
+                            <i class="fas fa-save me-2"></i>
+                            <strong>Smart Saving:</strong> The system automatically saves your progress. You can return anytime to edit and create new versions.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Advanced Features -->
+            <section id="advanced-features" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h2 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>Advanced Features
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="cover-letters">Cover Letter Generator</h3>
+                        
+                        <div class="guide-step">
+                            <h6><span class="step-number">1</span>Access Cover Letter Tool</h6>
+                            <p>From the dashboard or main navigation, click "Cover Letter Generator" to create professional cover letters.</p>
+                        </div>
+
+                        <div class="guide-step">
+                            <h6><span class="step-number">2</span>AI-Powered Generation</h6>
+                            <p>Provide the job details and let our AI generate a customized cover letter that complements your CV.</p>
+                        </div>
+
+                        <h3 id="premium-features" class="mt-4">Premium Features</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-warning h-100">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="mb-0"><i class="fas fa-crown me-2"></i>Free Plan</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success me-2"></i>3 CVs per month</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Basic templates</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Standard AI analysis</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>PDF export</li>
+                                            <li><i class="fas fa-times text-danger me-2"></i>Premium templates</li>
+                                            <li><i class="fas fa-times text-danger me-2"></i>Advanced customization</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-success h-100">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="mb-0"><i class="fas fa-star me-2"></i>Premium Plan</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success me-2"></i>Unlimited CVs</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>All premium templates</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Advanced AI features</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Multiple export formats</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Template customization</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                                        </ul>
+                                        <div class="text-center mt-3">
+                                            <a href="#" class="btn btn-success">
+                                                <i class="fas fa-crown me-2"></i>Upgrade Now
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Troubleshooting -->
+            <section id="troubleshooting" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h2 class="mb-0">
+                            <i class="fas fa-tools me-2"></i>Troubleshooting & Support
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="common-issues">Common Issues & Solutions</h3>
+                        
+                        <div class="accordion" id="troubleshootingAccordion">
+                            <div class="accordion-item">
+                                <h4 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#issue1">
+                                        <i class="fas fa-upload me-2"></i>CV Upload Problems
+                                    </button>
+                                </h4>
+                                <div id="issue1" class="accordion-collapse collapse show" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <div class="guide-step">
+                                            <h6>File Size Issues</h6>
+                                            <ul>
+                                                <li>Ensure file is under 10MB</li>
+                                                <li>Try compressing large PDF files</li>
+                                                <li>Convert images to text-based formats</li>
+                                            </ul>
+                                        </div>
+                                        <div class="guide-step">
+                                            <h6>Format Problems</h6>
+                                            <ul>
+                                                <li>Use standard fonts (Arial, Times New Roman, Calibri)</li>
+                                                <li>Avoid complex layouts or graphics</li>
+                                                <li>Ensure text is selectable, not embedded in images</li>
+                                                <li>Try saving as a different format (DOCX to PDF)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h4 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue2">
+                                        <i class="fas fa-robot me-2"></i>AI Analysis Issues
+                                    </button>
+                                </h4>
+                                <div id="issue2" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <div class="guide-step">
+                                            <h6>Slow Processing</h6>
+                                            <ul>
+                                                <li>Wait up to 30 seconds for complex analyses</li>
+                                                <li>Check your internet connection</li>
+                                                <li>Refresh the page and try again</li>
+                                                <li>Use shorter job descriptions for faster processing</li>
+                                            </ul>
+                                        </div>
+                                        <div class="guide-step">
+                                            <h6>Inaccurate Results</h6>
+                                            <ul>
+                                                <li>Ensure job description is complete and detailed</li>
+                                                <li>Use the full job posting, not just a summary</li>
+                                                <li>Check that your CV information is accurate</li>
+                                                <li>Try rewording unclear job requirements</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h4 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue3">
+                                        <i class="fas fa-eye me-2"></i>Template Preview Issues
+                                    </button>
+                                </h4>
+                                <div id="issue3" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <div class="guide-step">
+                                            <h6>Preview Not Loading</h6>
+                                            <ul>
+                                                <li>Enable pop-ups for this website</li>
+                                                <li>Try using Chrome or Firefox browsers</li>
+                                                <li>Disable ad blockers temporarily</li>
+                                                <li>Clear browser cache and cookies</li>
+                                            </ul>
+                                        </div>
+                                        <div class="guide-step">
+                                            <h6>Formatting Issues</h6>
+                                            <ul>
+                                                <li>Ensure all required fields are filled</li>
+                                                <li>Check for special characters in your text</li>
+                                                <li>Try a different template</li>
+                                                <li>Contact support if issues persist</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h4 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue4">
+                                        <i class="fas fa-download me-2"></i>Export & Download Problems
+                                    </button>
+                                </h4>
+                                <div id="issue4" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <div class="guide-step">
+                                            <h6>PDF Generation Fails</h6>
+                                            <ul>
+                                                <li>Check that all required sections are completed</li>
+                                                <li>Try a different browser</li>
+                                                <li>Disable browser extensions</li>
+                                                <li>Wait for page to fully load before exporting</li>
+                                            </ul>
+                                        </div>
+                                        <div class="guide-step">
+                                            <h6>Download Issues</h6>
+                                            <ul>
+                                                <li>Check your browser's download settings</li>
+                                                <li>Ensure sufficient storage space</li>
+                                                <li>Try right-clicking and "Save as"</li>
+                                                <li>Contact support for persistent issues</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 id="support" class="mt-4">Get Support</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-primary text-center h-100">
+                                    <div class="card-body">
+                                        <div class="feature-icon bg-primary">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <h6>Email Support</h6>
+                                        <p class="small">Get help via email<br>Response within 24 hours</p>
+                                        <a href="mailto:support@cvaibuilder.com" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-envelope me-2"></i>Email Us
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-success text-center h-100">
+                                    <div class="card-body">
+                                        <div class="feature-icon bg-success">
+                                            <i class="fas fa-comments"></i>
+                                        </div>
+                                        <h6>Live Chat</h6>
+                                        <p class="small">Instant support<br>Available 9 AM - 6 PM EST</p>
+                                        <button class="btn btn-success btn-sm">
+                                            <i class="fas fa-comments me-2"></i>Start Chat
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-info text-center h-100">
+                                    <div class="card-body">
+                                        <div class="feature-icon bg-info">
+                                            <i class="fas fa-question-circle"></i>
+                                        </div>
+                                        <h6>FAQ Database</h6>
+                                        <p class="small">Searchable help articles<br>Updated weekly</p>
+                                        <a href="#" class="btn btn-info btn-sm">
+                                            <i class="fas fa-search me-2"></i>Search FAQ
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tip-box">
+                            <i class="fas fa-clock me-2"></i>
+                            <strong>Before Contacting Support:</strong> Try clearing your browser cache, disabling extensions, and using an incognito/private window. Include your browser type and version when reporting issues.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Start Checklist -->
+            <section class="mb-5">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-check-circle me-2"></i>Quick Start Checklist
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Essential Steps (5 minutes)</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-square-check me-2 text-success"></i>Create account and verify email</li>
+                                    <li><i class="fas fa-square-check me-2 text-success"></i>Upload CV or start manual entry</li>
+                                    <li><i class="fas fa-square-check me-2 text-success"></i>Review and edit AI-extracted information</li>
+                                    <li><i class="fas fa-square-check me-2 text-success"></i>Choose a professional template</li>
+                                    <li><i class="fas fa-square-check me-2 text-success"></i>Preview and download your CV</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Advanced Features (Additional 10 minutes)</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-square me-2 text-muted"></i>Run job description analysis</li>
+                                    <li><i class="fas fa-square me-2 text-muted"></i>Apply AI recommendations</li>
+                                    <li><i class="fas fa-square me-2 text-muted"></i>Create multiple CV versions</li>
+                                    <li><i class="fas fa-square me-2 text-muted"></i>Generate matching cover letter</li>
+                                    <li><i class="fas fa-square me-2 text-muted"></i>Set up application tracking</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <a href="{% url 'cv_generator:cv_builder_comprehensive' %}" class="btn btn-success btn-lg">
+                                <i class="fas fa-rocket me-2"></i>Start Building Your CV Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Update active navigation
+                document.querySelectorAll('.list-group-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+            }
+        });
+    });
+
+    // Highlight active section in navigation
+    const observerOptions = {
+        rootMargin: '-20% 0px -70% 0px',
+        threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                const navLink = document.querySelector(`a[href="#${id}"]`);
+                
+                // Remove active from all nav items
+                document.querySelectorAll('.list-group-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add active to current section
+                if (navLink) {
+                    navLink.classList.add('active');
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Observe all sections
+    document.querySelectorAll('section[id]').forEach(section => {
+        observer.observe(section);
+    });
+
+    // Initialize Bootstrap tooltips and popovers
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %} 
